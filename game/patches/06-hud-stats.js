@@ -55,7 +55,7 @@
     injectStatCss();
     for (var id in hud.stats) {
       var s = hud.stats[id];
-      if (!s || !s.node || id === "hp" || id === "minimap") continue;
+      if (!s || !s.node || id === "hp" || id === "minimap" || id === "squad") continue;
       s.node.classList.add("rstat");
       paintStat(game, s);
       s.icon = s.node.querySelector(".e");
@@ -73,7 +73,7 @@
     if (!hud || !hud.stats) return;
     for (var id in hud.stats) {
       var s = hud.stats[id];
-      if (!s || !s.node || id === "hp" || id === "minimap") continue;
+      if (!s || !s.node || id === "hp" || id === "minimap" || id === "squad") continue;
       var cfg = s.cfg || {};
       var key = (cfg.icon || "") + "|" + (cfg.emoji || "");
       if (s.node.__ico !== key) { s.node.classList.add("rstat"); paintStat(game, s); }

@@ -186,7 +186,8 @@ def main():
         "      }\n"
         "    }\n"
         "    /* زرّا الصوت يصيران زرّين من أزرار الشاشة: نُسجّلهما قبل بناء الواجهة */\n"
-        "    try { registerVoiceButtons(P); } catch (e) { console.warn(\"voice btns\", e); }",
+        "    try { registerVoiceButtons(P); } catch (e) { console.warn(\"voice btns\", e); }\n"
+        "    try { registerSquadStat(P); } catch (e) { console.warn(\"squad stat\", e); }",
         "match player count + voice buttons",
     )
 
@@ -208,6 +209,41 @@ def main():
         '    swap: "تبديل السلاح", bag: "الحقيبة", drop: "رمي السلاح", scope: "التقريب",\n'
         '    mic: "الميكروفون", sound: "سماع الأصدقاء"',
         "BTN labels",
+    )
+    html = replace_once(
+        html,
+        '    kills: "عدّاد القتلى", rank: "الترتيب", alive: "الباقون",',
+        '    kills: "عدّاد القتلى", rank: "الترتيب", alive: "الباقون", squad: "دم الرفاق",',
+        "STAT labels",
+    )
+    html = replace_once(
+        html,
+        '    zone: ["⏱️", "⏳", "🌀", "⚠️", "🔵", "☢️"]',
+        '    zone: ["⏱️", "⏳", "🌀", "⚠️", "🔵", "☢️"],\n'
+        '    squad: ["❤️", "🩸", "👥", "🛡️", "💚", "🤝"]',
+        "squad emoji presets",
+    )
+    html = replace_once(
+        html,
+        '    } else {\n'
+        '      node = el("div", { class: "hud-stat rs-w", style: "pointer-events:auto" }, [',
+        '    } else if (cfg.id === "squad") {\n'
+        '      /* معاينة تُشبه اللوحة الحقيقية حتى تعرف ما تسحبه */\n'
+        '      node = el("div", { class: "hud-stat rs-w rsquad", style: "pointer-events:auto" });\n'
+        '      ["\u0631\u0641\u064A\u0642 \u0661", "\u0631\u0641\u064A\u0642 \u0662"].forEach(function (nm, i2) {\n'
+        '        node.appendChild(el("div", { class: "sq" }, [\n'
+        '          el("span", { class: "dot" }),\n'
+        '          el("span", { class: "nm", text: nm }),\n'
+        '          el("div", { class: "bar" }, [el("i", { style: "transform:scaleX(" + (i2 ? 0.4 : 0.85) + ")" })]),\n'
+        '          el("span", { class: "hp", text: i2 ? "40" : "85" })\n'
+        '        ]));\n'
+        '      });\n'
+        '      node.style.left = (cfg.x * s.w) + "px";\n'
+        '      node.style.top = (cfg.y * s.h) + "px";\n'
+        '      node.style.transform = "translate(-50%,-50%) scale(" + ((cfg.size || 1) * clamp(hudScale(), 0.7, 1.5)) + ")";\n'
+        '    } else {\n'
+        '      node = el("div", { class: "hud-stat rs-w", style: "pointer-events:auto" }, [',
+        "squad editor preview",
     )
     html = replace_once(
         html,
