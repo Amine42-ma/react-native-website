@@ -66,5 +66,8 @@
       th[j].classList.toggle("rs-bare", !!th[j].querySelector("img"));
     }
   }
-  setInterval(function () { try { bareFrame(); } catch (e) { rerr("bare", e); } }, 450);
+  setInterval(function () {
+    try { bareFrame(); } catch (e) { rerr("bare", e); }
+    try { lobbyFitVars(); } catch (e) { rerr("lbfit", e); }
+  }, 450);
   window.__ROYAL_BARE__ = bareFrame;

@@ -1,34 +1,67 @@
   /* ============================================================
-     6.52) حجم أزرار الواجهة = ما رتّبته بالضبط
+     6.52) واجهة اللعبة: صندوق تصميم واحد للحجم والمكان
      ------------------------------------------------------------
      كان الزرّ يُقاس بمقياسين مختلفين في آنٍ واحد:
 
-       • مكانه   ← نسبة من الشاشة الحقيقية (`left:x%`, `top:y%`)
-       • وحجمه   ← نسبة من صندوق ‎16:9‎ وهميّ مشتقٍّ من العرض وحده
-                   (`--dw = min(100vw, 100dvh*16/9)` ثمّ `--dh = --dw*9/16`)
+       • حجمه  ← نسبة من صندوق ‎16:9‎ مُدرَج داخل الشاشة
+                 (`--dw = min(100vw, 100dvh*16/9)`)
+       • مكانه ← نسبة من الشاشة الحقيقية (`left:x%`, `top:y%`)
 
-     في الوضع الأفقي يتقارب الصندوقان فلا يظهر الخلل. أمّا في الوضع
-     العمودي فارتفاع الصندوق الوهميّ يساوي عرض الشاشة × ‎9/16‎، أي نحو
-     ربع ارتفاعها الحقيقي — فيصير معنى «الطول ‎0.155‎» شيئاً في اللوحة
-     وشيئاً آخر في اللعبة. وإن اتّسعت نافذة المتصفّح عن ‎16:9‎ انقلب
-     المِقياس إلى الارتفاع فانتفخ الزرّ حتى خرج عن حافّتي الشاشة.
+     فإذا خالفت نسبةُ الشاشة ‎16:9‎ انفصل المقياسان: في العمودي يصير
+     ارتفاع الصندوق ربع ارتفاع الشاشة تقريباً، وفي الشاشة العريضة
+     يتباعد العرضان — فيهرب الزرّ عن موضعه في المعاينة.
 
-     العلاج: نُوحّد المقياسين. الحجم يصير نسبةً من الشاشة نفسها التي
-     يُقاس بها المكان — وهو عين ما تفعله المعاينة في اللوحة
-     (`b.w * W` و`b.h * H`) — فما تراه هناك هو ما تراه في اللعبة.
+     العلاج ليس بتوسيع الحجم إلى الشاشة (فذلك ينفخ الأزرار على الشاشات
+     العريضة)، بل بجرّ المكان إلى صندوق التصميم نفسه: نُبقي الحجم كما
+     كان بالضبط، ونحسب المكان داخل الصندوق ذاته ونُوسّطه في الشاشة.
+     فتصير الواجهة نسخةً طبق الأصل من المعاينة على أيّ جهاز وأيّ دوران.
      ============================================================ */
+  var LBFIT = { css: false };
+
   function lobbyFitCss() {
-    if (OPT.lobbyFit === false) return;
-    if (document.getElementById("royal-lbfit-css")) return;
+    if (OPT.lobbyFit === false || LBFIT.css) return;
+    LBFIT.css = true;
     var s = document.createElement("style");
     s.id = "royal-lbfit-css";
-    /* `#lobby` مفروش على الشاشة (`inset:0`)، فالنسبة المئوية هنا هي
-       نسبة الشاشة نفسها — نفس ما يُقاس به `left` و`top`. */
+    /* الحجم بصندوق ‎16:9‎ كما كان، والمكان صار بالصندوق نفسه موسَّطاً.
+       نستعمل وحدات الشاشة لا النِّسب المئويّة: المتغيّر الواحد يُستبدل
+       نصّاً، فلو حوى ‎%‎ لتغيّر معناه بين محور وآخر. */
     s.textContent =
       "#lobby .lb-el{" +
-      "width:calc(var(--w,.1) * 100%)!important;" +
-      "height:calc(var(--h,.12) * 100%)!important}";
+      "--bw:min(100vw, calc(100dvh * 16 / 9));" +
+      "--bh:calc(var(--bw) * 9 / 16);" +
+      "width:calc(var(--w,.1) * var(--bw))!important;" +
+      "height:calc(var(--h,.12) * var(--bh))!important;" +
+      "left:calc((100vw - var(--bw)) / 2 + var(--rx,.5) * var(--bw))!important;" +
+      "top:calc((100dvh - var(--bh)) / 2 + var(--ry,.5) * var(--bh))!important}" +
+      /* شريط الوضع (فردي/ضدّ الروبوتات) يتبع زرّ اللعب فليتبعه هنا أيضاً */
+      "#lobby .mode-bar{" +
+      "--bw:min(100vw, calc(100dvh * 16 / 9));" +
+      "--bh:calc(var(--bw) * 9 / 16);" +
+      "left:calc((100vw - var(--bw)) / 2 + var(--rx,.85) * var(--bw))!important;" +
+      "top:calc((100dvh - var(--bh)) / 2 + var(--ry,.72) * var(--bh) - 4.6em)!important}";
     document.head.appendChild(s);
   }
-  lobbyFitCss();
-  setInterval(function () { try { lobbyFitCss(); } catch (e) { } }, 2000);
+
+  /* المحرّك يكتب المكان في نمط العنصر مباشرةً، فنُمرّر له النِّسبتين
+     في متغيّرين ونترك الحساب كلّه للـ CSS — فيتبع تغيّر الشاشة فوراً
+     بلا انتظار دورتنا. */
+  function lobbyFitVars() {
+    if (OPT.lobbyFit === false) return;
+    lobbyFitCss();
+    var els = document.querySelectorAll("#lobby .lb-el");
+    var play = null;
+    for (var i = 0; i < els.length; i++) {
+      var n = els[i];
+      var cfg = lbCfgByUid(n.dataset && n.dataset.uid);
+      if (!cfg) continue;
+      if (n.style.getPropertyValue("--rx") !== String(cfg.x)) n.style.setProperty("--rx", cfg.x);
+      if (n.style.getPropertyValue("--ry") !== String(cfg.y)) n.style.setProperty("--ry", cfg.y);
+      if (cfg.kind === "play") play = cfg;
+    }
+    var mb = document.querySelector("#lobby .mode-bar");
+    if (mb && play) {
+      mb.style.setProperty("--rx", play.x);
+      mb.style.setProperty("--ry", play.y);
+    }
+  }
