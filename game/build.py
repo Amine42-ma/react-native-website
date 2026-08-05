@@ -60,7 +60,8 @@ def main():
         "  /* ============================================================\n     6.39.5) شكل الشخصية",
         "  /* ============================================================\n     6.40) شريطا العلاجات",
         "\n\n".join([patch("01-character.js"), patch("02-shadow.js"),
-                     patch("09-zone.js"), patch("03-glue.js")]),
+                     patch("09-zone.js"), patch("10-loot.js"), patch("11-squad.js"),
+                     patch("12-voice.js"), patch("13-net.js"), patch("03-glue.js")]),
         "character section 6.39.5",
     )
 
@@ -80,16 +81,22 @@ def main():
         "    try { upgradeShadow(game); } catch (e) { console.warn(\"shadow\", e); }\n"
         "    try { upgradeBlobs(game); } catch (e) { console.warn(\"blob\", e); }\n"
         "    try { upgradeStats(game); } catch (e) { console.warn(\"stats\", e); }\n"
-        "    try { zoneStormStop(); upgradeZoneWall(game); } catch (e) { console.warn(\"zone\", e); }",
+        "    try { zoneStormStop(); upgradeZoneWall(game); } catch (e) { console.warn(\"zone\", e); }\n"
+        "    try { squadReset(); hookNetEvents(game); } catch (e) { console.warn(\"squad\", e); }\n"
+        "    try { voicePanel(game); } catch (e) { console.warn(\"voice panel\", e); }\n"
+        "    try { fixAliveCount(game); } catch (e) { console.warn(\"alive\", e); }",
         "READY hook",
     )
     html = replace_once(
         html,
         "  window.__ROYAL_FX__ = function (game, dt) {\n    try { poseChars(game, dt); } catch (e) { }",
-        "  window.__ROYAL_FX__ = function (game, dt) {\n    try { poseChars(game, dt); } catch (e) { }\n"
-        "    try { followShadow(game); } catch (e) { }\n"
-        "    try { syncStats(game, dt); } catch (e) { }\n"
-        "    try { zoneStormFrame(game, dt); } catch (e) { }",
+        "  window.__ROYAL_FX__ = function (game, dt) {\n"
+        "    try { poseChars(game, dt); } catch (e) { rerr(\"pose\", e); }\n"
+        "    try { followShadow(game); } catch (e) { rerr(\"shadow\", e); }\n"
+        "    try { syncStats(game, dt); } catch (e) { rerr(\"stats\", e); }\n"
+        "    try { zoneStormFrame(game, dt); } catch (e) { rerr(\"zone\", e); }\n"
+        "    try { lootFrame(game, dt); } catch (e) { rerr(\"loot\", e); }\n"
+        "    try { squadFrame(game, dt); } catch (e) { rerr(\"squad\", e); }",
         "FX hook",
     )
 
@@ -139,6 +146,33 @@ def main():
         patch("07-account.js").rstrip("\n") + "\n\n"
         "  window.__ROYAL_SETUP__ = function (project) {",
         "account section",
+    )
+
+    # ---- 8) online settings: minimum real players + bot fill ----
+    html = splice(
+        html,
+        "      row(\"عدد اللاعبين\", slider(2, 25, 1, OPT.netTarget,",
+        "    ]));\n\n    s.appendChild(el(\"div\", { class: \"rs-card hero\" }, [",
+        patch("14-online-tab.js").rstrip("\n"),
+        "online tab rows",
+    )
+
+    # ---- 9) two surgical edits inside the minified engine ----
+    # Online matches spawned zero bots, so a half-full lobby meant an empty
+    # island. Route the count through a hook the setup layer owns.
+    html = replace_once(
+        html,
+        "let e=this.net?0:this.P.match.bots,",
+        "let e=this.net?((window.__ROYAL_NETBOTS__&&window.__ROYAL_NETBOTS__(this))||0):this.P.match.bots,",
+        "buildBots online bot count",
+    )
+    # Start once enough *real* players have joined (netMin), not only when the
+    # lobby is completely full; bots fill the rest.
+    html = replace_once(
+        html,
+        "b>=((window.__ROYAL_OPT__&&window.__ROYAL_OPT__.netTarget)||99)&&_()",
+        "b>=((window.__ROYAL_OPT__&&(window.__ROYAL_OPT__.netMin||window.__ROYAL_OPT__.netTarget))||99)&&_()",
+        "matchmaking start threshold",
     )
 
     with open(args.out, "w", encoding="utf-8") as f:

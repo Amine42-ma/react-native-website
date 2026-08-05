@@ -1,3 +1,14 @@
+  /* خطّافات الإطار تُنادى ستّين مرّة في الثانية، فلا يجوز أن يُوقف خطأٌ
+     فيها اللعبة — لكن ابتلاع الخطأ صامتاً يُخفي الأعطال. نُسجّل أوّل
+     عشرين خطأً في window.__ROYAL_ERR__ ثمّ نصمت. */
+  var RERR = [];
+  window.__ROYAL_ERR__ = RERR;
+  function rerr(tag, e) {
+    if (RERR.length >= 20) return;
+    var m = tag + ": " + ((e && e.message) || e);
+    if (RERR.indexOf(m) < 0) { RERR.push(m); console.warn("royal " + m); }
+  }
+
   /* ضرر البوت من سلاحه: نصف ضرر اللاعب تقريباً مع تلاشٍ بالمسافة */
   window.__ROYAL_BOTDMG__ = function (game, s, dist) {
     try {
@@ -32,6 +43,22 @@
         s.retarget = s.t + 2.5;
       }
     } catch (e) { }
+  };
+
+  /* مقبض تشخيص: يسمح بفحص هذه الوحدات من طرفيّة المتصفّح عند تتبّع عطل */
+  window.__ROYAL_DBG__ = {
+    upgradeLoot: function (g) { return upgradeLoot(g || (window.__runtime && window.__runtime.game)); },
+    strike: function (p) { return strike((window.__runtime && window.__runtime.game), p == null ? 1 : p); },
+    state: function () {
+      var g = window.__runtime && window.__runtime.game;
+      return {
+        loot: g && g.loot ? g.loot.length : -1,
+        lootUp: g && g.loot ? g.loot.filter(function (l) { return l.mesh && l.mesh.__up; }).length : -1,
+        bolts: BOLT.live.length + BOLT.pool.length,
+        storm: ZFX.storm, boltT: ZFX.boltT, next: ZFX.next,
+        errors: RERR.slice()
+      };
+    }
   };
 
   function poseChars(game, dt) {

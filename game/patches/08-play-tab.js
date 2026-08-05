@@ -42,7 +42,36 @@
           onclick: function () { OPT.zoneStorm = OPT.zoneStorm === false; persist(); renderPlay(); toast("تظهر في المباراة القادمة"); }
         })
       ]),
+      el("div", { class: "rs-chips" }, [
+        el("button", {
+          class: "rs-chip " + (OPT.zoneBolts !== false ? "ok" : "dz"),
+          text: OPT.zoneBolts !== false ? "⚡ صواعق تضرب الأرض" : "🚫 بلا صواعق",
+          onclick: function () { OPT.zoneBolts = OPT.zoneBolts === false; persist(); renderPlay(); }
+        })
+      ]),
       row("شدّة العاصفة", slider(0.2, 1, 0.05, OPT.zoneStormAlpha, function (v) { OPT.zoneStormAlpha = v; persist(); }))
+    ]));
+
+    s.appendChild(el("div", { class: "rs-card" }, [
+      el("h4", { text: "🎒 الغنائم والفريق والصوت" }),
+      el("div", { class: "rs-hint", text: "صناديق ذخيرة وحقائب إسعاف بأشكالها بدل مكعّبات عارية، ولوحة تُريك دم كلّ رفيق، وزرّا ميكروفون وسماع مستقلّان داخل لوحة الأسلحة." }),
+      el("div", { class: "rs-chips" }, [
+        el("button", {
+          class: "rs-chip " + (OPT.lootLook !== false ? "ok" : "dz"),
+          text: OPT.lootLook !== false ? "📦 غنائم مُجسَّمة" : "🚫 غنائم عادية",
+          onclick: function () { OPT.lootLook = OPT.lootLook === false; persist(); renderPlay(); toast("تظهر في المباراة القادمة"); }
+        }),
+        el("button", {
+          class: "rs-chip " + (OPT.squadHp !== false ? "ok" : "dz"),
+          text: OPT.squadHp !== false ? "❤️ دم الرفاق ظاهر" : "🚫 بلا لوحة رفاق",
+          onclick: function () { OPT.squadHp = OPT.squadHp === false; persist(); renderPlay(); }
+        }),
+        el("button", {
+          class: "rs-chip " + (OPT.voicePanel !== false ? "ok" : "dz"),
+          text: OPT.voicePanel !== false ? "🎤 زرّا الصوت في لوحة الأسلحة" : "🚫 زرّ الصوت العائم",
+          onclick: function () { OPT.voicePanel = OPT.voicePanel === false; persist(); renderPlay(); toast("يظهر في المباراة القادمة"); }
+        })
+      ])
     ]));
 
     /* ---- الحساب واسترجاعه ---- */

@@ -153,23 +153,35 @@
       ch.tilt.add(m);
       return m;
     }
-    /* الكفّ: راحة + أصابع ملتفّة حول المقبض + إبهام + معصم */
+    /* الكفّ: راحة + أربعة أصابع تلتفّ حول المقبض + إبهام فوقها + معصم */
     function makeHand(side) {
       var g = new T.Group();
-      var palm = new T.Mesh(new T.Box(R * 0.19, R * 0.28, R * 0.22), matGlove);
-      palm.position.set(0, 0, -R * 0.08);
+      var palm = new T.Mesh(new T.Box(R * 0.2, R * 0.27, R * 0.2), matGlove);
+      palm.position.set(0, 0, -R * 0.09);
       g.add(palm);
       /* الأصابع أمام الراحة: أصل المجموعة يقع بينهما فينطبق على المقبض */
-      var fing = new T.Mesh(new T.Cyl(R * 0.145, R * 0.145, R * 0.26, seg, 1), matGlove);
-      fing.rotation.z = Math.PI * 0.5;
-      fing.position.set(0, -R * 0.02, R * 0.07);
-      g.add(fing);
-      var thumb = new T.Mesh(new T.Cyl(R * 0.068, R * 0.055, R * 0.22, 6, 1), matGlove);
+      var nF = lod ? 2 : 4;
+      for (var f = 0; f < nF; f++) {
+        var k = nF === 1 ? 0 : (f / (nF - 1) - 0.5);        /* ‎-0.5..0.5‎ */
+        var len = R * (0.24 - Math.abs(k) * 0.05);
+        var fg = new T.Mesh(new T.Cyl(R * 0.042, R * 0.038, len, 6, 1), matGlove);
+        fg.rotation.z = Math.PI * 0.5;
+        fg.position.set(0, R * (0.085 - f * 0.062), R * 0.07);
+        g.add(fg);
+        /* عقدة الإصبع: كرة صغيرة تُدوّر الطرف فلا يبدو أنبوباً مقطوعاً */
+        var tip = new T.Mesh(new T.Sph(R * 0.042, 6, 4), matGlove);
+        tip.position.set(-side * len * 0.5, fg.position.y, fg.position.z);
+        g.add(tip);
+      }
+      var thumb = new T.Mesh(new T.Cyl(R * 0.062, R * 0.05, R * 0.2, 6, 1), matGlove);
       thumb.rotation.set(Math.PI * 0.44, 0, -side * 0.42);
-      thumb.position.set(side * R * 0.1, R * 0.09, R * 0.07);
+      thumb.position.set(side * R * 0.11, R * 0.1, R * 0.05);
       g.add(thumb);
-      var wrist = new T.Mesh(new T.Cyl(R * 0.125, R * 0.115, R * 0.13, seg, 1), matCuff);
-      wrist.position.set(0, R * 0.2, 0);
+      var knuck = new T.Mesh(new T.Box(R * 0.2, R * 0.06, R * 0.13), matCuff);
+      knuck.position.set(0, R * 0.12, R * 0.02);
+      g.add(knuck);
+      var wrist = new T.Mesh(new T.Cyl(R * 0.128, R * 0.112, R * 0.15, seg, 1), matCuff);
+      wrist.position.set(0, R * 0.2, -R * 0.02);
       g.add(wrist);
       g.traverse(function (o) { if (o.isMesh) { o.castShadow = cast; o.frustumCulled = false; } });
       ch.tilt.add(g);
@@ -183,6 +195,9 @@
       elL: ball(R * 0.165, matSleeve), elR: ball(R * 0.165, matSleeve),
       foL: bone(R * 0.16, R * 0.13), foR: bone(R * 0.16, R * 0.13),
       hdL: makeHand(-1), hdR: makeHand(1),
+      /* ساقان قصيرتان: كانت الأحذية تطفو تحت الكبسولة بلا شيء يصلها */
+      lgL: bone(R * 0.19, R * 0.16), lgR: bone(R * 0.19, R * 0.16),
+      knL: ball(R * 0.15, matCuff), knR: ball(R * 0.15, matCuff),
       upLen: L * 0.42, foLen: L * 0.40,
       /* أهداف مُنعَّمة حتى لا تقفز اليد بين الحالات */
       tL: new T.V3(), tR: new T.V3(), has: false,
@@ -365,6 +380,21 @@
     placeBone(Lb.foL, Lb.eL, t.b);
     Lb.elL.position.copy(Lb.eL);
     orientHand(Lb.hdL, t.b, Lb.eL, Lb.fwd);
+
+    /* الساقان: من الورك إلى أعلى الحذاء حيث يضعه المحرّك */
+    var hipY = R * 0.66 + cy;
+    if (Lb.lgL && ch.footL) {
+      t.a.set(-R * 0.46, hipY, 0);
+      t.b.copy(ch.footL.position); t.b.y += R * 0.16;
+      placeBone(Lb.lgL, t.a, t.b);
+      Lb.knL.position.set((t.a.x + t.b.x) * 0.5, (t.a.y + t.b.y) * 0.5, (t.a.z + t.b.z) * 0.5);
+    }
+    if (Lb.lgR && ch.footR) {
+      t.a.set(R * 0.46, hipY, 0);
+      t.b.copy(ch.footR.position); t.b.y += R * 0.16;
+      placeBone(Lb.lgR, t.a, t.b);
+      Lb.knR.position.set((t.a.x + t.b.x) * 0.5, (t.a.y + t.b.y) * 0.5, (t.a.z + t.b.z) * 0.5);
+    }
   }
 
   function upgradeChars(game) {
