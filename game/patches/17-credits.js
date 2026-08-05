@@ -131,6 +131,24 @@
       list.appendChild(el("div", { class: "hnt", text: "تعذّرت القراءة: " + e.message }));
     });
 
+    /* المكتبات: المُصغِّر ينزع إشعارات الرخص من الشفرة، ورخصة MIT تشترط
+       بقاء الإشعار مع كلّ نسخة — فنُعيده هنا صراحةً */
+    var lib = el("div", { class: "sec" });
+    lib.appendChild(el("div", { class: "ttl", text: "المحرّك ثلاثي الأبعاد" }));
+    lib.appendChild(el("div", { class: "hnt", text: "three.js — رخصة MIT" }));
+    lib.appendChild(el("div", {
+      class: "hnt", style: "direction:ltr;text-align:left;font-size:11.5px",
+      text: "The MIT License — Copyright © 2010-2025 three.js authors"
+    }));
+    var la = el("a", {
+      href: "https://github.com/mrdoob/three.js/blob/dev/LICENSE",
+      target: "_blank", rel: "noopener",
+      style: "color:#25d3ff;font-size:12px;direction:ltr;display:block;word-break:break-all"
+    });
+    la.textContent = "https://github.com/mrdoob/three.js/blob/dev/LICENSE";
+    lib.appendChild(la);
+    box.appendChild(lib);
+
     box.appendChild(el("div", { class: "rw" }, [
       el("button", { class: "x", text: "✕ إغلاق", onclick: function () { wrap.remove(); } })
     ]));
