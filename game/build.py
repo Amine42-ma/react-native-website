@@ -149,7 +149,8 @@ def main():
         html,
         "  window.__ROYAL_SETUP__ = function (project) {",
         patch("07-account.js").rstrip("\n") + "\n\n" +
-        patch("17-credits.js").rstrip("\n") + "\n\n"
+        patch("17-credits.js").rstrip("\n") + "\n\n" +
+        patch("18-bare.js").rstrip("\n") + "\n\n"
         "  window.__ROYAL_SETUP__ = function (project) {",
         "account section",
     )
@@ -189,7 +190,18 @@ def main():
         "match player count + voice buttons",
     )
 
-    # ---- 10) the editor must know the two new buttons by name ----
+    # ---- 10) editor preview: an icon with no frame, like in the game ----
+    html = replace_once(
+        html,
+        '      var n = el("div", { class: "lbb" + (lbSel === b.uid ? " sel" : "") + (b.visible ? "" : " off") });\n'
+        '      n.style.background = "linear-gradient(180deg," + (b.color || "#c56bff") + "," + hexA(b.color || "#c56bff", 0.55) + ")";',
+        '      var bare = OPT.bareIcons !== false && !!b.icon;\n'
+        '      var n = el("div", { class: "lbb" + (lbSel === b.uid ? " sel" : "") + (b.visible ? "" : " off") + (bare ? " rs-bare" : "") });\n'
+        '      if (!bare) n.style.background = "linear-gradient(180deg," + (b.color || "#c56bff") + "," + hexA(b.color || "#c56bff", 0.55) + ")";',
+        "lobby preview bare",
+    )
+
+    # ---- 11) the editor must know the two new buttons by name ----
     html = replace_once(
         html,
         '    swap: "تبديل السلاح", bag: "الحقيبة", drop: "رمي السلاح", scope: "التقريب"',
@@ -206,7 +218,7 @@ def main():
         "EMOJI presets",
     )
 
-    # ---- 11) two surgical edits inside the minified engine ----
+    # ---- 12) two surgical edits inside the minified engine ----
     # Online matches spawned zero bots, so a half-full lobby meant an empty
     # island. Route the count through a hook the setup layer owns.
     html = replace_once(

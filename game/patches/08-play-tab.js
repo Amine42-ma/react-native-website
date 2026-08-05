@@ -77,6 +77,11 @@
           onclick: function () { OPT.voicePanel = !OPT.voicePanel; persist(); renderPlay(); toast("يظهر في المباراة القادمة"); }
         }),
         el("button", {
+          class: "rs-chip " + (OPT.bareIcons !== false ? "ok" : "dz"),
+          text: OPT.bareIcons !== false ? "🖼️ أيقونة الواجهة بلا إطار" : "🔲 أيقونة داخل إطار",
+          onclick: function () { OPT.bareIcons = OPT.bareIcons === false; persist(); renderPlay(); renderLobbyTab && 0; }
+        }),
+        el("button", {
           class: "rs-chip", text: "📜 الشكر والتراخيص",
           onclick: function () { if (window.__ROYAL_CREDITS__) window.__ROYAL_CREDITS__(); }
         })
