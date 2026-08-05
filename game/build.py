@@ -150,7 +150,8 @@ def main():
         "  window.__ROYAL_SETUP__ = function (project) {",
         patch("07-account.js").rstrip("\n") + "\n\n" +
         patch("17-credits.js").rstrip("\n") + "\n\n" +
-        patch("18-bare.js").rstrip("\n") + "\n\n"
+        patch("18-bare.js").rstrip("\n") + "\n\n" +
+        patch("19-lobbyfit.js").rstrip("\n") + "\n\n"
         "  window.__ROYAL_SETUP__ = function (project) {",
         "account section",
     )
