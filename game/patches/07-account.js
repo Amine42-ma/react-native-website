@@ -318,6 +318,10 @@
 
     box.appendChild(msg);
     box.appendChild(el("div", { class: "rw" }, [
+      el("button", {
+        class: "x", text: "📜 الشكر والتراخيص",
+        onclick: function () { wrap.remove(); if (window.__ROYAL_CREDITS__) window.__ROYAL_CREDITS__(); }
+      }),
       el("button", { class: "x", text: "✕ إغلاق", onclick: function () { wrap.remove(); } })
     ]));
     wrap.classList.add("on");

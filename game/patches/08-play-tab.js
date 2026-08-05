@@ -54,7 +54,7 @@
 
     s.appendChild(el("div", { class: "rs-card" }, [
       el("h4", { text: "🎒 الغنائم والفريق والصوت" }),
-      el("div", { class: "rs-hint", text: "صناديق ذخيرة وحقائب إسعاف بأشكالها بدل مكعّبات عارية، ولوحة تُريك دم كلّ رفيق، وزرّا ميكروفون وسماع مستقلّان داخل لوحة الأسلحة." }),
+      el("div", { class: "rs-hint", text: "صناديق ذخيرة وحقائب إسعاف بأشكالها بدل مكعّبات عارية، ولوحة تُريك دم كلّ رفيق، وزرّا ميكروفون وسماع تسحبهما وتُبدّل أيقونتهما من تبويب «الأزرار» مثل بقيّة الأزرار." }),
       el("div", { class: "rs-chips" }, [
         el("button", {
           class: "rs-chip " + (OPT.lootLook !== false ? "ok" : "dz"),
@@ -67,9 +67,18 @@
           onclick: function () { OPT.squadHp = OPT.squadHp === false; persist(); renderPlay(); }
         }),
         el("button", {
-          class: "rs-chip " + (OPT.voicePanel !== false ? "ok" : "dz"),
-          text: OPT.voicePanel !== false ? "🎤 زرّا الصوت في لوحة الأسلحة" : "🚫 زرّ الصوت العائم",
-          onclick: function () { OPT.voicePanel = OPT.voicePanel === false; persist(); renderPlay(); toast("يظهر في المباراة القادمة"); }
+          class: "rs-chip " + (OPT.voiceButtons !== false ? "ok" : "dz"),
+          text: OPT.voiceButtons !== false ? "🎤 الميكروفون والسماع زرّان في الشاشة" : "🚫 بلا زرّي صوت",
+          onclick: function () { OPT.voiceButtons = OPT.voiceButtons === false; persist(); renderPlay(); toast("رتّبهما من تبويب «الأزرار»"); }
+        }),
+        el("button", {
+          class: "rs-chip " + (OPT.voicePanel ? "ok" : "dz"),
+          text: OPT.voicePanel ? "🔊 وزرّان ملتصقان بلوحة الأسلحة" : "🚫 بلا زرّين في لوحة الأسلحة",
+          onclick: function () { OPT.voicePanel = !OPT.voicePanel; persist(); renderPlay(); toast("يظهر في المباراة القادمة"); }
+        }),
+        el("button", {
+          class: "rs-chip", text: "📜 الشكر والتراخيص",
+          onclick: function () { if (window.__ROYAL_CREDITS__) window.__ROYAL_CREDITS__(); }
         })
       ])
     ]));

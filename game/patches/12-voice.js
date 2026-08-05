@@ -50,6 +50,79 @@
     }
   }
 
+  /* ------------------------------------------------------------------
+     الميكروفون والسماع كزرّين من أزرار الشاشة
+     ------------------------------------------------------------------
+     المحرّك يبني كلّ زرّ من جدول تعريفات مكشوف على window، فنُسجّل فيه
+     زرّين جديدين ونُضيفهما إلى ترتيب الأزرار. بذلك يصيران مثل «القفز»
+     و«الضرب» تماماً: تسحبهما بإصبعك، وتُكبّرهما، وتُبدّل أيقونتهما
+     بصورة من جهازك، وتُخفيهما — كلّه من تبويب «الأزرار».
+     ------------------------------------------------------------------ */
+  function registerVoiceButtons(P) {
+    if (OPT.voiceButtons === false) return;
+    var D = window.__ROYAL_BTNDEFS__;
+    if (D) {
+      if (!D.mic) D.mic = { label: "الميكروفون", emo: "🎤", kind: "btn" };
+      if (!D.sound) D.sound = { label: "سماع الأصدقاء", emo: "🔊", kind: "btn" };
+    }
+    if (!P || !P.controls || !Array.isArray(P.controls.layout)) return;
+    var have = {};
+    P.controls.layout.forEach(function (c) { if (c) have[c.id] = 1; });
+    if (!have.mic) P.controls.layout.push({
+      id: "mic", x: 0.955, y: 0.22, size: 54, wk: 1, hk: 1,
+      shape: "round", emoji: "🎤", icon: null, visible: true, opacity: 0.92
+    });
+    if (!have.sound) P.controls.layout.push({
+      id: "sound", x: 0.955, y: 0.33, size: 54, wk: 1, hk: 1,
+      shape: "round", emoji: "🔊", icon: null, visible: true, opacity: 0.92
+    });
+  }
+
+  /* حالة الزرّ تُقرأ من لونه: أحمر باهت = مغلق، بلا مساس بأيقونتك */
+  function voiceBtnCss() {
+    if (document.getElementById("royal-vbtn-css")) return;
+    var s = document.createElement("style");
+    s.id = "royal-vbtn-css";
+    s.textContent =
+      ".gw.voff{filter:grayscale(.75) brightness(.75)}" +
+      ".gw.voff::after{content:'';position:absolute;left:12%;right:12%;top:48%;height:9%;" +
+      "border-radius:3px;background:#ff4d5e;transform:rotate(-38deg);box-shadow:0 0 6px rgba(0,0,0,.6)}" +
+      ".gw.voff{position:relative}";
+    document.head.appendChild(s);
+  }
+
+  function voiceWidgetsSync(game) {
+    var hud = game && game.hud; if (!hud || !hud.widgets) return;
+    voiceBtnCss();
+    var m = hud.widgets.mic, s = hud.widgets.sound;
+    if (m && m.node) m.node.classList.toggle("voff", !VOICE.mic);
+    if (s && s.node) s.node.classList.toggle("voff", !VOICE.listen);
+  }
+
+  function voiceButtonsFrame(game) {
+    var hud = game && game.hud;
+    if (!hud || !hud.consume) return;
+    var online = !!game.net;
+    if (hud.consume("mic")) {
+      if (!online) toast("الصوت يعمل في الأونلاين مع الأصدقاء");
+      else {
+        VOICE.mic = !VOICE.mic;
+        if (VOICE.mic) { try { ensureMic(); } catch (e) { } }
+        toast(VOICE.mic ? "🎤 ميكروفونك مفتوح" : "🚫 ميكروفونك مغلق — لن يسمعوك");
+        voiceApply();
+      }
+    }
+    if (hud.consume("sound")) {
+      if (!online) toast("الصوت يعمل في الأونلاين مع الأصدقاء");
+      else {
+        VOICE.listen = !VOICE.listen;
+        toast(VOICE.listen ? "🔊 تسمع رفاقك" : "🔇 لن تسمع شيئاً");
+        voiceApply();
+      }
+    }
+    voiceWidgetsSync(game);
+  }
+
   function voicePanel(game) {
     if (OPT.voicePanel === false || !OPT.voice) return;
     var box = document.getElementById("ammobox");

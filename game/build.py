@@ -100,7 +100,8 @@ def main():
         "    try { lootFrame(game, dt); } catch (e) { rerr(\"loot\", e); }\n"
         "    try { squadFrame(game, dt); } catch (e) { rerr(\"squad\", e); }\n"
         "    try { dropFrame(game, dt); } catch (e) { rerr(\"drop\", e); }\n"
-        "    try { botAiFrame(game, dt); } catch (e) { rerr(\"botai\", e); }",
+        "    try { botAiFrame(game, dt); } catch (e) { rerr(\"botai\", e); }\n"
+        "    try { voiceButtonsFrame(game); } catch (e) { rerr(\"voicebtn\", e); }",
         "FX hook",
     )
 
@@ -147,7 +148,8 @@ def main():
     html = replace_once(
         html,
         "  window.__ROYAL_SETUP__ = function (project) {",
-        patch("07-account.js").rstrip("\n") + "\n\n"
+        patch("07-account.js").rstrip("\n") + "\n\n" +
+        patch("17-credits.js").rstrip("\n") + "\n\n"
         "  window.__ROYAL_SETUP__ = function (project) {",
         "account section",
     )
@@ -167,21 +169,44 @@ def main():
         "    if (P.match) {\n"
         "      P.match.online = !!OPT.online;\n"
         "      P.match.netWait = OPT.netWait;\n"
-        "      P.match.netMinPlayers = 1;",
+        "      P.match.netMinPlayers = 1;\n"
+        "      P.match.lookSens = P.match.lookSens || 1;\n"
+        "    }",
         "    if (P.match) {\n"
         "      P.match.online = !!OPT.online;\n"
         "      P.match.netWait = OPT.netWait;\n"
         "      P.match.netMinPlayers = 1;\n"
+        "      P.match.lookSens = P.match.lookSens || 1;\n"
         "      /* عدد واحد يحكم المباراة: أنت + الباقون. أونلاين نطلب العدد\n"
         "         نفسه ونُكمل نقصه بوتات، وبلا أونلاين كلّهم بوتات. */\n"
         "      if (OPT.matchPlayers > 1) {\n"
         "        P.match.bots = Math.max(1, Math.round(OPT.matchPlayers) - 1);\n"
         "        OPT.netTarget = Math.round(OPT.matchPlayers);\n"
-        "      }",
-        "match player count",
+        "      }\n"
+        "    }\n"
+        "    /* زرّا الصوت يصيران زرّين من أزرار الشاشة: نُسجّلهما قبل بناء الواجهة */\n"
+        "    try { registerVoiceButtons(P); } catch (e) { console.warn(\"voice btns\", e); }",
+        "match player count + voice buttons",
     )
 
-    # ---- 10) two surgical edits inside the minified engine ----
+    # ---- 10) the editor must know the two new buttons by name ----
+    html = replace_once(
+        html,
+        '    swap: "تبديل السلاح", bag: "الحقيبة", drop: "رمي السلاح", scope: "التقريب"',
+        '    swap: "تبديل السلاح", bag: "الحقيبة", drop: "رمي السلاح", scope: "التقريب",\n'
+        '    mic: "الميكروفون", sound: "سماع الأصدقاء"',
+        "BTN labels",
+    )
+    html = replace_once(
+        html,
+        '    scope: ["🔭", "🔍", "🎯", "👁️", "🔬", "📡"],',
+        '    scope: ["🔭", "🔍", "🎯", "👁️", "🔬", "📡"],\n'
+        '    mic: ["🎤", "🗣️", "📢", "🔴", "🎙️", "🚫"],\n'
+        '    sound: ["🔊", "👂", "🎧", "🔉", "🔔", "🔇"],',
+        "EMOJI presets",
+    )
+
+    # ---- 11) two surgical edits inside the minified engine ----
     # Online matches spawned zero bots, so a half-full lobby meant an empty
     # island. Route the count through a hook the setup layer owns.
     html = replace_once(
