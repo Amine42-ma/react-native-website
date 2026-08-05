@@ -23,6 +23,7 @@
 
   /* لا يذهبون خارج الزون: نسحب هدفهم إلى داخله */
   window.__ROYAL_BOTTGT__ = function (game, s) {
+    try { botSeek(game, s); } catch (e) { rerr("botSeek", e); }
     try {
       if (!OPT.botZone) return;
       var z = game.zone; if (!z || !z.r) return;
@@ -49,6 +50,7 @@
   window.__ROYAL_DBG__ = {
     upgradeLoot: function (g) { return upgradeLoot(g || (window.__runtime && window.__runtime.game)); },
     strike: function (p) { return strike((window.__runtime && window.__runtime.game), p == null ? 1 : p); },
+    botAi: function (dt) { return botAiFrame((window.__runtime && window.__runtime.game), dt == null ? 1 : dt); },
     state: function () {
       var g = window.__runtime && window.__runtime.game;
       return {

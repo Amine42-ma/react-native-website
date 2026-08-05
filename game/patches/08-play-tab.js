@@ -74,6 +74,25 @@
       ])
     ]));
 
+    s.appendChild(el("div", { class: "rs-card" }, [
+      el("h4", { text: "🪂 عدد الأشخاص ونزولهم" }),
+      el("div", { class: "rs-hint", text: "عدد واحد يحكم المباراة كلّها: أنت والباقون. بلا أونلاين كلّهم خصوم آليّون، ومع الأونلاين يُطلب العدد نفسه ويُكمَّل نقصه بوتات. وكلّهم يقفزون من الطائرة بالمظلّات مثلك — كلٌّ عند لحظته — بدل أن يظهروا على الأرض ظهوراً." }),
+      row("عدد الأشخاص", slider(2, 60, 1, OPT.matchPlayers, function (v) { OPT.matchPlayers = v; persist(); })),
+      el("div", { class: "rs-chips" }, [
+        el("button", {
+          class: "rs-chip " + (OPT.botChute !== false ? "ok" : "dz"),
+          text: OPT.botChute !== false ? "🪂 ينزلون بالمظلّات" : "🚫 يظهرون على الأرض",
+          onclick: function () { OPT.botChute = OPT.botChute === false; persist(); renderPlay(); toast("يظهر في المباراة القادمة"); }
+        }),
+        el("button", {
+          class: "rs-chip " + (OPT.botLoot !== false ? "ok" : "dz"),
+          text: OPT.botLoot !== false ? "📦 يفتحون الصناديق ويلتقطون" : "🚫 يدورون بلا هدف",
+          onclick: function () { OPT.botLoot = OPT.botLoot === false; persist(); renderPlay(); }
+        })
+      ]),
+      el("div", { class: "rs-hint", text: "خمسون شخصاً على هاتف متوسّط ثقيلة قليلاً — إن تقطّعت اللعبة أنزل العدد أو أطفئ ظلّ اللاعب." })
+    ]));
+
     /* ---- الحساب واسترجاعه ---- */
     var gid = el("input", {
       type: "text", class: "rs-txt", dir: "ltr",

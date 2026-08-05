@@ -61,7 +61,8 @@ def main():
         "  /* ============================================================\n     6.40) شريطا العلاجات",
         "\n\n".join([patch("01-character.js"), patch("02-shadow.js"),
                      patch("09-zone.js"), patch("10-loot.js"), patch("11-squad.js"),
-                     patch("12-voice.js"), patch("13-net.js"), patch("03-glue.js")]),
+                     patch("12-voice.js"), patch("13-net.js"), patch("15-drop.js"),
+                     patch("16-botai.js"), patch("03-glue.js")]),
         "character section 6.39.5",
     )
 
@@ -84,7 +85,8 @@ def main():
         "    try { zoneStormStop(); upgradeZoneWall(game); } catch (e) { console.warn(\"zone\", e); }\n"
         "    try { squadReset(); hookNetEvents(game); } catch (e) { console.warn(\"squad\", e); }\n"
         "    try { voicePanel(game); } catch (e) { console.warn(\"voice panel\", e); }\n"
-        "    try { fixAliveCount(game); } catch (e) { console.warn(\"alive\", e); }",
+        "    try { fixAliveCount(game); } catch (e) { console.warn(\"alive\", e); }\n"
+        "    try { dropInit(game); } catch (e) { console.warn(\"drop\", e); }",
         "READY hook",
     )
     html = replace_once(
@@ -96,7 +98,9 @@ def main():
         "    try { syncStats(game, dt); } catch (e) { rerr(\"stats\", e); }\n"
         "    try { zoneStormFrame(game, dt); } catch (e) { rerr(\"zone\", e); }\n"
         "    try { lootFrame(game, dt); } catch (e) { rerr(\"loot\", e); }\n"
-        "    try { squadFrame(game, dt); } catch (e) { rerr(\"squad\", e); }",
+        "    try { squadFrame(game, dt); } catch (e) { rerr(\"squad\", e); }\n"
+        "    try { dropFrame(game, dt); } catch (e) { rerr(\"drop\", e); }\n"
+        "    try { botAiFrame(game, dt); } catch (e) { rerr(\"botai\", e); }",
         "FX hook",
     )
 
@@ -157,7 +161,27 @@ def main():
         "online tab rows",
     )
 
-    # ---- 9) two surgical edits inside the minified engine ----
+    # ---- 9) one knob for how many people are in a match ----
+    html = replace_once(
+        html,
+        "    if (P.match) {\n"
+        "      P.match.online = !!OPT.online;\n"
+        "      P.match.netWait = OPT.netWait;\n"
+        "      P.match.netMinPlayers = 1;",
+        "    if (P.match) {\n"
+        "      P.match.online = !!OPT.online;\n"
+        "      P.match.netWait = OPT.netWait;\n"
+        "      P.match.netMinPlayers = 1;\n"
+        "      /* عدد واحد يحكم المباراة: أنت + الباقون. أونلاين نطلب العدد\n"
+        "         نفسه ونُكمل نقصه بوتات، وبلا أونلاين كلّهم بوتات. */\n"
+        "      if (OPT.matchPlayers > 1) {\n"
+        "        P.match.bots = Math.max(1, Math.round(OPT.matchPlayers) - 1);\n"
+        "        OPT.netTarget = Math.round(OPT.matchPlayers);\n"
+        "      }",
+        "match player count",
+    )
+
+    # ---- 10) two surgical edits inside the minified engine ----
     # Online matches spawned zero bots, so a half-full lobby meant an empty
     # island. Route the count through a hook the setup layer owns.
     html = replace_once(
