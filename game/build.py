@@ -218,7 +218,40 @@ def main():
         "EMOJI presets",
     )
 
-    # ---- 12) two surgical edits inside the minified engine ----
+    # ---- 12) lobby buttons were capped at 45% wide / 40% tall ----
+    # The play button could not be made big; the cap lived only in the two
+    # editor sliders, nothing in the renderer limits it.
+    html = replace_once(
+        html,
+        '    box.appendChild(row("العرض", slider(0.04, 0.45, 0.005, b.w, function (v) { b.w = v; persist(); drawLobbyPreview(pv); })));\n'
+        '    box.appendChild(row("الطول", slider(0.05, 0.4, 0.005, b.h, function (v) { b.h = v; persist(); drawLobbyPreview(pv); })));',
+        '    box.appendChild(row("العرض", slider(0.04, 1.6, 0.005, b.w, function (v) { b.w = v; persist(); drawLobbyPreview(pv); })));\n'
+        '    box.appendChild(row("الطول", slider(0.05, 1.6, 0.005, b.h, function (v) { b.h = v; persist(); drawLobbyPreview(pv); })));\n'
+        '    box.appendChild(el("div", { class: "rs-hint", text: "المُنزلق يصل الآن إلى أضعاف عرض الشاشة — كبّر زرّ اللعب كما تشاء. ولو أردت رقماً أدقّ فاكتبه في الخانتين تحت." }));\n'
+        '    box.appendChild(row("العرض (رقماً)", numBox(b.w, function (v) { b.w = v; persist(); drawLobbyPreview(pv); })));\n'
+        '    box.appendChild(row("الطول (رقماً)", numBox(b.h, function (v) { b.h = v; persist(); drawLobbyPreview(pv); })));',
+        "lobby size sliders",
+    )
+    # a plain number box, so no slider range can ever cage him again
+    html = replace_once(
+        html,
+        "  function lbButtons() { return (P.lobby && P.lobby.buttons) || []; }",
+        "  function lbButtons() { return (P.lobby && P.lobby.buttons) || []; }\n"
+        "\n"
+        "  /* خانة رقم حرّة: المُنزلق مهما اتّسع يبقى له طرف، وهذه بلا طرف */\n"
+        "  function numBox(val, onChange) {\n"
+        "    var i = el(\"input\", { type: \"number\", class: \"rs-txt\", dir: \"ltr\",\n"
+        "      step: \"0.01\", min: \"0.01\", value: String(Math.round(val * 1000) / 1000) });\n"
+        "    i.oninput = function () {\n"
+        "      var v = parseFloat(i.value);\n"
+        "      if (isFinite(v) && v > 0) onChange(v);\n"
+        "    };\n"
+        "    return i;\n"
+        "  }",
+        "lobby number box",
+    )
+
+    # ---- 13) two surgical edits inside the minified engine ----
     # Online matches spawned zero bots, so a half-full lobby meant an empty
     # island. Route the count through a hook the setup layer owns.
     html = replace_once(
