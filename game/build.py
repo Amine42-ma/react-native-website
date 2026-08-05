@@ -54,6 +54,15 @@ def main():
     html = read(args.src)
     orig_len = len(html)
 
+    # A build stamp, so a screenshot can be tied to an exact file. Android
+    # keeps every download as a separate document; without this we cannot
+    # tell which one is running.
+    import hashlib, datetime
+    h = hashlib.sha256()
+    for name in sorted(os.listdir(PATCHES)):
+        h.update(read(os.path.join(PATCHES, name)).encode("utf-8"))
+    stamp = datetime.date.today().strftime("%Y-%m-%d") + "." + h.hexdigest()[:5]
+
     # ---- 1) character rig: arms that really hold the gun, shoes, shadow ----
     html = splice(
         html,
@@ -309,11 +318,13 @@ def main():
         "matchmaking start threshold",
     )
 
+    html = replace_once(html, "@@BUILD@@", stamp, "build stamp")
+
     with open(args.out, "w", encoding="utf-8") as f:
         f.write(html)
-    print("build: %s -> %s (%d -> %d bytes, %+d)"
+    print("build: %s -> %s (%d -> %d bytes, %+d) stamp=%s"
           % (os.path.basename(args.src), os.path.basename(args.out),
-             orig_len, len(html), len(html) - orig_len))
+             orig_len, len(html), len(html) - orig_len, stamp))
 
 
 if __name__ == "__main__":

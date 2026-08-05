@@ -1,3 +1,9 @@
+    s.appendChild(el("div", { class: "rs-card" }, [
+      el("h4", { text: "\u{1F9FE} \u0631\u0642\u0645 \u0627\u0644\u0646\u0633\u062E\u0629" }),
+      el("div", { class: "rs-hint", text: "إذا أرسلتَ لي صورةً لخللٍ ما، أرسل معها هذا الرقم — به أعرف أيّ ملفّ تُشغّل بالضبط، فقد تتشابه الملفّات في جهازك ويُفتح القديم بدل الجديد." }),
+      el("div", { style: "direction:ltr;text-align:center;font-weight:900;font-size:15px;letter-spacing:1px;background:rgba(0,0,0,.3);border-radius:9px;padding:8px", text: String(OPT.buildId || "?") })
+    ]));
+
     /* ---- الظلّ والبحر: مقادير المظهر ---- */
     s.appendChild(el("div", { class: "rs-card" }, [
       el("h4", { text: "🌑 ظلّ اللاعب" }),
