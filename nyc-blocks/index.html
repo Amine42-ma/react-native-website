@@ -151,89 +151,92 @@ h3{margin:16px 0 6px;font-size:15px;color:var(--acc);text-align:right;}
   box-shadow:0 0 14px rgba(90,180,255,.5);
 }
 .tbtn{
-  position:absolute;pointer-events:auto;touch-action:none;display:flex;align-items:center;justify-content:center;
+  position:relative;pointer-events:auto;touch-action:none;display:flex;align-items:center;justify-content:center;
   border-radius:50%;background:var(--btn);border:1.5px solid rgba(150,200,255,.45);
   color:#eaf2ff;font-size:13px;font-weight:700;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
   width:60px;height:60px;opacity:.82;transition:transform .06s,background .1s,opacity .15s;
 }
 .tbtn.wide{border-radius:16px;width:70px;height:52px;font-size:12.5px;}
 .tbtn.act{background:rgba(80,160,240,.72);transform:scale(.92);opacity:1;border-color:#bfe6ff;}
-/* The right-hand cluster is always kept clear of the minimap (>=146px from the
-   right edge), and the stats panel sits above the stick instead of under it. */
-#btnJump   {right:calc(148px + var(--safe-r));bottom:calc(18px + var(--safe-b));width:64px;height:64px;font-size:14px;}
-#btnInter  {right:calc(148px + var(--safe-r));bottom:calc(92px + var(--safe-b));}
-#btnRun    {right:calc(218px + var(--safe-r));bottom:calc(18px + var(--safe-b));}
-#btnVeh    {right:calc(218px + var(--safe-r));bottom:calc(92px + var(--safe-b));}
-#btnCam    {right:calc(284px + var(--safe-r));bottom:calc(52px + var(--safe-b));width:52px;height:52px;font-size:12px;}
-#btnPause  {position:absolute;top:calc(10px + var(--safe-t));left:50%;transform:translateX(-50%);
-  width:44px;height:38px;border-radius:12px;pointer-events:auto;font-size:16px;}
-#btnGas    {right:calc(148px + var(--safe-r));bottom:calc(18px + var(--safe-b));width:70px;height:70px;font-size:13px;}
-#btnBrake  {right:calc(228px + var(--safe-r));bottom:calc(18px + var(--safe-b));width:62px;height:62px;font-size:13px;}
-#btnExit   {right:calc(148px + var(--safe-r));bottom:calc(96px + var(--safe-b));}
-#btnHorn   {right:calc(228px + var(--safe-r));bottom:calc(92px + var(--safe-b));width:54px;height:54px;font-size:12px;}
-#btnLeftS  {left:calc(148px + var(--safe-l));bottom:calc(20px + var(--safe-b));width:62px;height:62px;font-size:20px;}
-#btnRightS {left:calc(20px + var(--safe-l));bottom:calc(20px + var(--safe-b));width:62px;height:62px;font-size:20px;}
+/* One tidy grid per hand. Only the container is positioned, so the cluster
+   keeps its shape at every screen size and never creeps over the minimap. */
+#padR, #padRCar {
+  position:absolute; display:grid; grid-template-columns:repeat(2, auto); gap:10px;
+  pointer-events:none; direction:ltr;
+}
+#padLCar { position:absolute; display:grid; grid-template-columns:repeat(2, auto); gap:10px; pointer-events:none; }
+#utilRow {
+  position:absolute; top:calc(8px + var(--safe-t)); left:50%; transform:translateX(-50%);
+  display:flex; gap:8px; pointer-events:none;
+}
+.tbtn i { font-style:normal; font-size:1.25em; line-height:1; }
+.tbtn b { font-weight:600; font-size:0.66em; opacity:.92; margin-top:2px; letter-spacing:.2px; }
+.tbtn { flex-direction:column; }
+.tbtn.prim { background:rgba(46,110,190,.5); border-color:rgba(170,215,255,.7); }
+.tbtn.prim.act { background:rgba(90,175,255,.8); }
+.tbtn.util { width:44px; height:38px; border-radius:12px; }
+.tbtn.util i { font-size:1.05em; }
 
-/* touch layout: lift the stat panel above the stick so nothing overlaps */
+/* touch: the stat panel lifts clear of the stick */
 body.touch #bottomLeft{bottom:calc(152px + var(--safe-b));width:min(44vw,176px);padding:6px 10px;}
 body.touch #bottomLeft .bl{font-size:10px;}
 body.touch #bottomLeft .bar{height:7px;margin:2px 0 5px;}
 body.touch #dlgWrap{padding-bottom:calc(150px + var(--safe-b));}
 body.touch #dialog{width:min(78vw,520px);}
-body.touch #hint{bottom:calc(150px + var(--safe-b));}
-body.touch.driving #bottomLeft{bottom:calc(96px + var(--safe-b));}
 body.touch.driving #joyBase{opacity:0;}
 body.touch.driving #joyZone{pointer-events:none;}
 
+/* landscape: cluster sits to the left of the minimap */
+#padR, #padRCar { right:calc(146px + var(--safe-r)); bottom:calc(16px + var(--safe-b)); }
+#padLCar { left:calc(18px + var(--safe-l)); bottom:calc(18px + var(--safe-b)); }
+.tbtn { width:60px; height:60px; }
+#btnJump, #btnGas { width:66px; height:66px; }
+
+/* portrait: cluster stacks above the minimap */
+@media (orientation:portrait){
+  #minimap{width:92px;height:92px;}
+  #padR, #padRCar { right:calc(14px + var(--safe-r)); bottom:calc(118px + var(--safe-b)); }
+  #padLCar { left:calc(16px + var(--safe-l)); bottom:calc(150px + var(--safe-b)); }
+  body.touch #bottomLeft{bottom:calc(146px + var(--safe-b));width:min(42vw,168px);}
+  body.touch.driving #bottomLeft{bottom:calc(146px + var(--safe-b));}
+  body.touch #dlgWrap{padding-bottom:calc(300px + var(--safe-b));}
+  body.touch #hint{bottom:calc(288px + var(--safe-b));}
+  #topLeft{max-width:33vw;font-size:11.5px;padding:6px 8px;}
+  #topLeft .mt{font-size:11.5px;} #topLeft .mo{font-size:11px;} #topLeft .md{font-size:10px;}
+  #topRight{min-width:0;font-size:11.5px;padding:6px 8px;line-height:1.55;}
+}
 @media (max-height:460px){
   #joyBase{width:96px;height:96px;} #joyKnob{width:44px;height:44px;left:24px;top:24px;}
-  .tbtn{width:50px;height:50px;font-size:11.5px;}
-  #btnJump{width:56px;height:56px;} #btnGas{width:60px;height:60px;} #btnBrake{width:54px;height:54px;}
-  #btnLeftS,#btnRightS{width:54px;height:54px;}
+  .tbtn{width:52px;height:52px;font-size:11.5px;}
+  #btnJump, #btnGas{width:58px;height:58px;}
   #minimap{width:88px;height:88px;}
-  #btnJump,#btnInter,#btnGas,#btnExit{right:calc(122px + var(--safe-r));}
-  #btnRun,#btnVeh,#btnBrake,#btnHorn{right:calc(182px + var(--safe-r));}
-  #btnCam{right:calc(240px + var(--safe-r));width:46px;height:46px;}
-  #btnLeftS{left:calc(128px + var(--safe-l));}
+  #padR, #padRCar { right:calc(122px + var(--safe-r)); bottom:calc(12px + var(--safe-b)); gap:8px; }
   body.touch #bottomLeft{bottom:calc(128px + var(--safe-b));width:min(40vw,150px);}
   body.touch #dlgWrap{padding-bottom:calc(120px + var(--safe-b));}
   body.touch #hint{bottom:calc(126px + var(--safe-b));}
   #topRight,#topLeft{font-size:12.5px;padding:6px 9px;}
 }
-/* Portrait phones: the right hand buttons stack in a column ABOVE the minimap,
-   so they can never reach across the screen into the joystick. */
-@media (orientation:portrait){
-  #minimap{width:92px;height:92px;}
-  .tbtn{width:58px;height:58px;font-size:12.5px;}
-  #btnJump{width:62px;height:62px;font-size:14px;}
-  #btnInter {right:calc(18px + var(--safe-r));bottom:calc(122px + var(--safe-b));}
-  #btnJump  {right:calc(86px + var(--safe-r));bottom:calc(120px + var(--safe-b));}
-  #btnVeh   {right:calc(18px + var(--safe-r));bottom:calc(192px + var(--safe-b));}
-  #btnRun   {right:calc(86px + var(--safe-r));bottom:calc(192px + var(--safe-b));}
-  #btnCam   {right:calc(18px + var(--safe-r));bottom:calc(260px + var(--safe-b));width:52px;height:52px;}
-  #btnGas   {right:calc(18px + var(--safe-r));bottom:calc(120px + var(--safe-b));width:66px;height:66px;}
-  #btnBrake {right:calc(92px + var(--safe-r));bottom:calc(122px + var(--safe-b));width:60px;height:60px;}
-  #btnExit  {right:calc(18px + var(--safe-r));bottom:calc(196px + var(--safe-b));}
-  #btnHorn  {right:calc(92px + var(--safe-r));bottom:calc(196px + var(--safe-b));width:54px;height:54px;}
-  #btnLeftS {left:calc(96px + var(--safe-l));bottom:calc(22px + var(--safe-b));}
-  #btnRightS{left:calc(20px + var(--safe-l));bottom:calc(22px + var(--safe-b));}
-  #topLeft{max-width:33vw;font-size:11.5px;padding:6px 8px;}
-  #topLeft .mt{font-size:11.5px;} #topLeft .mo{font-size:11px;} #topLeft .md{font-size:10px;}
-  #topRight{min-width:0;font-size:11.5px;padding:6px 8px;line-height:1.55;}
-  body.touch #bottomLeft{bottom:calc(146px + var(--safe-b));width:min(42vw,168px);}
-  body.touch.driving #bottomLeft{bottom:calc(146px + var(--safe-b));}
-  body.touch #dlgWrap{padding-bottom:calc(330px + var(--safe-b));}
-  body.touch #hint{bottom:calc(300px + var(--safe-b));}
-}
-@media (orientation:portrait) and (max-width:360px){
+@media (max-width:400px){
   #minimap{width:80px;height:80px;}
-  .tbtn{width:52px;height:52px;font-size:11.5px;}
-  #btnJump{width:56px;height:56px;}
-  #btnJump,#btnRun,#btnBrake,#btnHorn{right:calc(80px + var(--safe-r));}
+  .tbtn{width:52px;height:52px;font-size:11px;}
+  #btnJump, #btnGas{width:56px;height:56px;}
+  #padR, #padRCar { gap:8px; }
 }
-@media (max-width:420px) and (orientation:landscape){
-  #minimap{width:84px;height:84px;}
-  #btnCam{display:none;}
+body.pad-s .tbtn { width:50px; height:50px; font-size:11px; }
+body.pad-s #btnJump, body.pad-s #btnGas { width:56px; height:56px; }
+body.pad-l .tbtn { width:72px; height:72px; font-size:14px; }
+body.pad-l #btnJump, body.pad-l #btnGas { width:80px; height:80px; }
+body.pad-l #padR, body.pad-l #padRCar { right:calc(168px + var(--safe-r)); }
+@media (orientation:portrait){
+  body.pad-l #padR, body.pad-l #padRCar { right:calc(12px + var(--safe-r)); bottom:calc(120px + var(--safe-b)); }
+}
+/* left handed players can mirror the whole pad */
+body.lefty #padR, body.lefty #padRCar { right:auto; left:calc(14px + var(--safe-l)); }
+body.lefty #padLCar { left:auto; right:calc(16px + var(--safe-r)); }
+body.lefty #joyZone { left:auto; right:0; }
+body.lefty #lookArea { right:auto; left:0; }
+body.lefty #bottomLeft { left:auto; right:calc(10px + var(--safe-r)); }
+body.lefty #bottomRight { right:auto; left:calc(10px + var(--safe-l)); }
 }
 </style>
 </head>
@@ -290,21 +293,29 @@ body.touch.driving #joyZone{pointer-events:none;}
       <div id="joyBase"><div id="joyKnob"></div></div>
     </div>
     <div id="footBtns">
-      <div class="tbtn" id="btnJump">قفز</div>
-      <div class="tbtn" id="btnRun">ركض</div>
-      <div class="tbtn" id="btnInter">تفاعل</div>
-      <div class="tbtn" id="btnVeh">ركوب</div>
-      <div class="tbtn" id="btnCam">كاميرا</div>
+      <div id="padR">
+        <div class="tbtn" id="btnVeh"><i>⬒</i><b>ركوب</b></div>
+        <div class="tbtn" id="btnRun"><i>»</i><b>ركض</b></div>
+        <div class="tbtn" id="btnInter"><i>◉</i><b>تفاعل</b></div>
+        <div class="tbtn prim" id="btnJump"><i>↑</i><b>قفز</b></div>
+      </div>
     </div>
     <div id="carBtns" class="hidden">
-      <div class="tbtn" id="btnGas">تسارع</div>
-      <div class="tbtn" id="btnBrake">فرامل</div>
-      <div class="tbtn" id="btnExit">خروج</div>
-      <div class="tbtn" id="btnLeftS">◀</div>
-      <div class="tbtn" id="btnRightS">▶</div>
-      <div class="tbtn" id="btnHorn">بوق</div>
+      <div id="padRCar">
+        <div class="tbtn" id="btnHorn"><i>♪</i><b>بوق</b></div>
+        <div class="tbtn" id="btnExit"><i>✕</i><b>خروج</b></div>
+        <div class="tbtn" id="btnBrake"><i>▼</i><b>فرامل</b></div>
+        <div class="tbtn prim" id="btnGas"><i>▲</i><b>تسارع</b></div>
+      </div>
+      <div id="padLCar">
+        <div class="tbtn" id="btnLeftS"><i>◀</i></div>
+        <div class="tbtn" id="btnRightS"><i>▶</i></div>
+      </div>
     </div>
-    <div class="tbtn" id="btnPause">☰</div>
+    <div id="utilRow">
+      <div class="tbtn util" id="btnCam"><i>◎</i></div>
+      <div class="tbtn util" id="btnPause"><i>☰</i></div>
+    </div>
   </div>
 
   <!-- ============ MENUS ============ -->
@@ -348,6 +359,10 @@ body.touch.driving #joyZone{pointer-events:none;}
       <div class="seg">
         <button id="tgTouch">تحكم اللمس: تلقائي</button>
         <button id="tgInv">حساسية الكاميرا</button>
+      </div>
+      <div class="seg">
+        <button id="tgPad">حجم الأزرار: متوسط</button>
+        <button id="tgHand">اليد: يمين</button>
       </div>
       <h3>أدوات</h3>
       <button id="btnResetPlayer">إعادة ضبط اللاعب</button>
@@ -428,7 +443,7 @@ body.touch.driving #joyZone{pointer-events:none;}
 var CFG = {
   SEED: 'NYC_BLOCKS_2026',
   CELL: 4,               // 1 voxel cell = 4 world units ~= 4 meters (compressed realistic scale)
-  N: 256,                // world is N x N cells  -> 1024 x 1024 units
+  N: 512,                // world is N x N cells  -> 2048 x 2048 units (~2 km across)
   CHUNK: 32,             // cells per chunk (32x32) -> 128 x 128 units
   WATER_Y: -1.2,         // water surface height
   BED_Y: -7,             // river/harbour bed
@@ -439,15 +454,18 @@ var CFG = {
   JUMP: 9.4,
   STEP: 2.2,             // max step-up height (stairs / kerbs)
   P_RAD: 1.1,            // player collision radius
-  P_HEI: 3.4,            // player height (units)
+  P_HEI: 3.6,            // player height (units)
   DAY_LEN: 20 * 60,      // full day cycle in seconds (~20 minutes)
-  BOUND: 496,            // soft world boundary (units from center)
-  BOUND_HARD: 520,
+  BOUND: 1000,           // soft world boundary (units from center)
+  BOUND_HARD: 1030,
   AUTOSAVE: 20,          // seconds
   QUALITY: {
-    LOW:    { radius: 2, cars: 15, npcs: 20, rain: false, shadows: false, pr: 0.72, fog: 250, trees: 0.45 },
-    MEDIUM: { radius: 3, cars: 30, npcs: 40, rain: true,  shadows: false, pr: 1.0,  fog: 360, trees: 0.8 },
-    HIGH:   { radius: 4, cars: 45, npcs: 70, rain: true,  shadows: true,  pr: 1.35, fog: 470, trees: 1.0 }
+    LOW:    { radius: 2, cars: 15, npcs: 20, rain: false, shadows: false, pr: 0.72,
+              fog: 300, lod: 9,  view: 900,  trees: 0.45 },
+    MEDIUM: { radius: 3, cars: 30, npcs: 40, rain: true,  shadows: false, pr: 1.0,
+              fog: 520, lod: 14, view: 1500, trees: 0.8 },
+    HIGH:   { radius: 4, cars: 45, npcs: 70, rain: true,  shadows: true,  pr: 1.35,
+              fog: 760, lod: 20, view: 2300, trees: 1.0 }
   }
 };
 var N = CFG.N, CELL = CFG.CELL, CH = CFG.CHUNK, NC = N / CH;
@@ -706,41 +724,77 @@ function tileTexture(name) {
 
 // ---- facades: 64px = 16 world units = 4 x 4 windows ----
 var FAC_PX = 64, FAC_UNIT = 16, FAC_WIN = 16;
+// win: 'ribbon' curtain wall | 'grid' big panes | 'punched' small windows with sills
 var FACADES = [
-  { k: 'glass',  wall: 0x3d6f8c, win: 0x8ecbe6, frame: 0x2b4f66, lit: 0xfff0bc, litP: 0.55, big: 1 },
-  { k: 'classic',wall: 0xb0a48c, win: 0x2f3946, frame: 0x8d8371, lit: 0xffdc9a, litP: 0.42, big: 0 },
-  { k: 'office', wall: 0x8f959c, win: 0x3a5f75, frame: 0x767c84, lit: 0xfff0c0, litP: 0.5,  big: 1 },
-  { k: 'resid',  wall: 0xc0a98c, win: 0x36404c, frame: 0x9c8a72, lit: 0xffd39a, litP: 0.46, big: 0 },
-  { k: 'brown',  wall: 0x7a4433, win: 0x2a3038, frame: 0x5e3427, lit: 0xffc98a, litP: 0.5,  big: 0 },
-  { k: 'ware',   wall: 0x6f7378, win: 0x3a4550, frame: 0x5b5f64, lit: 0xdfe8ff, litP: 0.2,  big: 0 },
-  { k: 'shop',   wall: 0xa4646b, win: 0x2e3640, frame: 0x87515a, lit: 0xfff2b0, litP: 0.62, big: 1 },
-  { k: 'house',  wall: 0xcbc3ae, win: 0x39424e, frame: 0xa89f8c, lit: 0xffd89a, litP: 0.4,  big: 0 }
+  { k: 'glassBlue',  wall: 0x35617c, win: 0x8fd0e8, frame: 0x24455c, span: 0x2b4f68, lit: 0xfff0bc, litP: 0.55, style: 'ribbon' },
+  { k: 'glassGreen', wall: 0x2f6357, win: 0x8ad9c4, frame: 0x224b43, span: 0x28564c, lit: 0xffeeb0, litP: 0.5,  style: 'ribbon' },
+  { k: 'stone',      wall: 0xb3a68c, win: 0x2f3946, frame: 0x8d8371, span: 0x9c917a, lit: 0xffdc9a, litP: 0.42, style: 'punched', pier: 1 },
+  { k: 'deco',       wall: 0x9d5f47, win: 0x2a3038, frame: 0x7a4634, span: 0x8a5340, lit: 0xffc98a, litP: 0.5,  style: 'punched', pier: 1 },
+  { k: 'office',     wall: 0x9aa0a8, win: 0x3f6379, frame: 0x767c84, span: 0x868c94, lit: 0xfff0c0, litP: 0.5,  style: 'grid' },
+  { k: 'resid',      wall: 0xc7b094, win: 0x36404c, frame: 0x9c8a72, span: 0xb5a087, lit: 0xffd39a, litP: 0.46, style: 'punched' },
+  { k: 'brown',      wall: 0x7a4433, win: 0x2a3038, frame: 0x5e3427, span: 0x6d3d2e, lit: 0xffc98a, litP: 0.5,  style: 'punched' },
+  { k: 'ware',       wall: 0x74787e, win: 0x3a4550, frame: 0x5b5f64, span: 0x686d73, lit: 0xdfe8ff, litP: 0.2,  style: 'grid', rib: 1 },
+  { k: 'shop',       wall: 0xa8686f, win: 0x2e3640, frame: 0x87515a, span: 0x996069, lit: 0xfff2b0, litP: 0.62, style: 'grid' },
+  { k: 'house',      wall: 0xd0c8b2, win: 0x39424e, frame: 0xa89f8c, span: 0xc2b9a2, lit: 0xffd89a, litP: 0.4,  style: 'punched', rib: 1 },
+  { k: 'white',      wall: 0xd8dade, win: 0x4a6f88, frame: 0xb9bcc2, span: 0x9aa0a8, lit: 0xfff4d2, litP: 0.52, style: 'grid' },
+  { k: 'black',      wall: 0x2c3038, win: 0x4c6d84, frame: 0x1e2229, span: 0x24282f, lit: 0xffe9a8, litP: 0.58, style: 'ribbon' }
 ];
 function buildFacade(def, si) {
   var map = document.createElement('canvas'); map.width = map.height = FAC_PX;
   var emi = document.createElement('canvas'); emi.width = emi.height = FAC_PX;
   var m = map.getContext('2d'), e = emi.getContext('2d');
   m.imageSmoothingEnabled = false; e.imageSmoothingEnabled = false;
-  // wall base with grain
-  for (var y = 0; y < FAC_PX; y += 2) for (var x = 0; x < FAC_PX; x += 2) {
-    px(m, x, y, 2, 2, shade(def.wall, 0.86 + ihash(x, y, 300 + si) * 0.28));
+  var x, y, gx, gy;
+  // wall with a subtle vertical grain
+  for (y = 0; y < FAC_PX; y++) for (x = 0; x < FAC_PX; x += 2) {
+    px(m, x, y, 2, 1, shade(def.wall, 0.88 + ihash(x, y, 300 + si) * 0.24));
   }
   px(e, 0, 0, FAC_PX, FAC_PX, '#000');
-  var wm = def.big ? 2 : 3, wh = def.big ? 3 : 4;   // window margins
-  for (var gy = 0; gy < 4; gy++) for (var gx = 0; gx < 4; gx++) {
-    var ox = gx * FAC_WIN, oy = gy * FAC_WIN;
-    var wx = ox + wm, wy = oy + wh, ww = FAC_WIN - wm * 2, wht = FAC_WIN - wh * 2;
-    px(m, wx - 1, wy - 1, ww + 2, wht + 2, shade(def.frame, 1));
-    px(m, wx, wy, ww, wht, shade(def.win, 0.92 + ihash(gx, gy, 400 + si) * 0.2));
-    px(m, wx, wy, ww, 1, shade(def.win, 1.35));                       // glass highlight
-    if (!def.big) px(m, wx - 1, wy + wht, ww + 2, 1, shade(def.frame, 1.25)); // sill
-    if (ihash(gx, gy, 500 + si) < def.litP) {
-      var k = 0.75 + ihash(gx, gy, 600 + si) * 0.5;
-      px(e, wx, wy, ww, wht, shade(def.lit, k));
+
+  var wm, wh, ww, wht;
+  if (def.style === 'ribbon') { wm = 1; wh = 4; }
+  else if (def.style === 'grid') { wm = 2; wh = 3; }
+  else { wm = 4; wh = 5; }
+
+  for (gy = 0; gy < 4; gy++) {
+    var oy = gy * FAC_WIN;
+    // spandrel band under each floor
+    px(m, 0, oy, FAC_PX, wh - 1, shade(def.span, 1));
+    px(m, 0, oy + wh - 1, FAC_PX, 1, shade(def.frame, 1.15));
+    for (gx = 0; gx < 4; gx++) {
+      var ox = gx * FAC_WIN, k = ihash(gx, gy, 400 + si);
+      ww = FAC_WIN - wm * 2; wht = FAC_WIN - wh - 3;
+      var wx = ox + wm, wy = oy + wh;
+      if (def.style === 'ribbon') {                    // continuous glazing
+        px(m, wx - 1, wy - 1, ww + 2, wht + 2, shade(def.frame, 1));
+        px(m, wx, wy, ww, wht, shade(def.win, 0.9 + k * 0.28));
+        px(m, wx, wy, ww, 1, shade(def.win, 1.4));
+        px(m, ox + FAC_WIN - 1, oy, 1, FAC_WIN, shade(def.frame, 1.1));   // mullion
+      } else if (def.style === 'grid') {
+        px(m, wx - 1, wy - 1, ww + 2, wht + 2, shade(def.frame, 1));
+        px(m, wx, wy, ww, wht, shade(def.win, 0.92 + k * 0.24));
+        px(m, wx + (ww >> 1), wy, 1, wht, shade(def.frame, 1.05));        // centre bar
+        px(m, wx, wy + (wht >> 1), ww, 1, shade(def.frame, 1.05));
+      } else {                                          // punched openings
+        px(m, wx - 1, wy - 1, ww + 2, wht + 2, shade(def.frame, 0.95));
+        px(m, wx, wy, ww, wht, shade(def.win, 0.9 + k * 0.3));
+        px(m, wx, wy, ww, 1, shade(def.win, 1.35));
+        px(m, wx - 2, wy + wht, ww + 4, 2, shade(def.frame, 1.3));        // sill
+        px(m, wx + (ww >> 1), wy, 1, wht, shade(def.frame, 1.1));
+      }
+      if (ihash(gx, gy, 500 + si) < def.litP) {
+        px(e, wx, wy, ww, wht, shade(def.lit, 0.75 + ihash(gx, gy, 600 + si) * 0.5));
+      }
+    }
+    if (def.rib) for (x = 0; x < FAC_PX; x += 4) px(m, x, oy, 1, FAC_WIN, shade(def.wall, 0.86));
+  }
+  if (def.pier) {                                       // vertical piers between bays
+    for (gx = 0; gx <= 4; gx++) {
+      var pxx = gx * FAC_WIN - 1;
+      if (pxx < 0) pxx = 0;
+      px(m, pxx, 0, 2, FAC_PX, shade(def.wall, 1.12));
     }
   }
-  // ledge line between floors on classic styles
-  if (!def.big) for (var f = 0; f < 4; f++) px(m, 0, f * FAC_WIN, FAC_PX, 1, shade(def.wall, 0.72));
   return { map: map, emi: emi };
 }
 
@@ -774,9 +828,9 @@ function buildShopfront() {
    ========================================================================= */
 var MATS = [];
 var M_ATLAS = 0, M_GLOW = 1, FAC0 = 2;
-var M_GRASS = 10, M_ASPH = 11, M_ASPH_NS = 12, M_ASPH_EW = 13, M_SIDE = 14,
-    M_DIRT = 15, M_SAND = 16, M_PATH = 17, M_ROCK = 18, M_ROOF = 19,
-    M_CROSS = 20, M_BED = 21, M_PLAZA = 22, M_WOOD = 23, M_CROSS_EW = 24, M_SHOP = 25;
+var M_GRASS = 14, M_ASPH = 15, M_ASPH_NS = 16, M_ASPH_EW = 17, M_SIDE = 18,
+    M_DIRT = 19, M_SAND = 20, M_PATH = 21, M_ROCK = 22, M_ROOF = 23,
+    M_CROSS = 24, M_BED = 25, M_PLAZA = 26, M_WOOD = 27, M_CROSS_EW = 28, M_SHOP = 29;
 var GROUND_MATS = [
   [M_GRASS, 'grass'], [M_ASPH, 'asphalt'], [M_ASPH_NS, 'asphaltNS'], [M_ASPH_EW, 'asphaltEW'],
   [M_SIDE, 'sidewalk'], [M_DIRT, 'dirt'], [M_SAND, 'sand'], [M_PATH, 'path'],
@@ -824,7 +878,7 @@ function buildMaterials() {
     map: texFrom(tileTexture('water'), true), color: 0x9fd8ff, side: THREE.DoubleSide,
     transparent: true, opacity: 0.82, depthWrite: false
   });
-  matWater.map.repeat.set(48, 48);
+  matWater.map.repeat.set(110, 110);
   matVeh = new THREE.MeshLambertMaterial({ vertexColors: true });
   matChar = new THREE.MeshLambertMaterial({ vertexColors: true });
   matMarker = new THREE.MeshBasicMaterial({ color: 0xffd166, transparent: true, opacity: 0.62, depthWrite: false });
@@ -853,31 +907,35 @@ var W = {
   bldT:  new Uint8Array(N * N),
   tree:  new Uint8Array(N * N),
   park:  new Uint8Array(N * N),
-  shore: new Uint8Array(N * N)
+  shore: new Uint8Array(N * N),
+  bldId: new Int32Array(N * N)
 };
 var BUILDINGS = [];                 // {x,z,w,d,h,t,tiers}
 var BCH = [];                       // buildings per chunk
 var PCH = [];                       // props per chunk
 var TLIGHTS = [];                   // traffic light intersections
 
-// geography constants (cell coords)
-var MAN_X0 = 58, MAN_X1 = 152, MAN_Z0 = 30, MAN_Z1 = 232;
-var BOR_X0 = 178, BOR_X1 = 248;
-var WST_X0 = 6,  WST_X1 = 26;
-var PARK_X0 = 76, PARK_X1 = 126, PARK_Z0 = 100, PARK_Z1 = 146;
-var NEON_X0 = 96, NEON_X1 = 118, NEON_Z0 = 146, NEON_Z1 = 162;
+// geography constants (cell coords). SC scales the whole layout at once, so the
+// districts, rivers, bridges and the street grid stay in step with each other.
+var SC = 2;
+var MAN_X0 = 58 * SC, MAN_X1 = 152 * SC, MAN_Z0 = 30 * SC, MAN_Z1 = 232 * SC;
+var BOR_X0 = 178 * SC, BOR_X1 = 248 * SC;
+var WST_X0 = 6 * SC,  WST_X1 = 26 * SC;
+var PARK_X0 = 76 * SC, PARK_X1 = 126 * SC, PARK_Z0 = 100 * SC, PARK_Z1 = 146 * SC;
+var NEON_X0 = 96 * SC, NEON_X1 = 118 * SC, NEON_Z0 = 146 * SC, NEON_Z1 = 162 * SC;
+var NF = 1 / SC;                                   // noise frequency scale
 
-function hudsonL(z) { return 24 + (fbm(z * 0.022, 0.5, 3, 2) - 0.5) * 12; }
-function hudsonR(z) { return 57 + (fbm(z * 0.022, 9.5, 3, 2) - 0.5) * 10; }
-function eastL(z)   { return 152 + (fbm(z * 0.025, 4.5, 5, 2) - 0.5) * 11; }
-function eastR(z)   { return 177 + (fbm(z * 0.025, 7.5, 5, 2) - 0.5) * 9; }
-function bayZ(x)    { return 231 + (fbm(x * 0.03, 2.5, 6, 2) - 0.5) * 9; }
+function hudsonL(z) { return 24 * SC + (fbm(z * 0.022 * NF, 0.5, 3, 2) - 0.5) * 12 * SC; }
+function hudsonR(z) { return 57 * SC + (fbm(z * 0.022 * NF, 9.5, 3, 2) - 0.5) * 10 * SC; }
+function eastL(z)   { return 152 * SC + (fbm(z * 0.025 * NF, 4.5, 5, 2) - 0.5) * 11 * SC; }
+function eastR(z)   { return 177 * SC + (fbm(z * 0.025 * NF, 7.5, 5, 2) - 0.5) * 9 * SC; }
+function bayZ(x)    { return 231 * SC + (fbm(x * 0.03 * NF, 2.5, 6, 2) - 0.5) * 9 * SC; }
 
 function densityAt(x, z) {
-  var d1 = Math.exp(-dist2(x, z, 106, 176) / (2 * 46 * 46));   // midtown core
-  var d2 = Math.exp(-dist2(x, z, 100, 214) / (2 * 28 * 28));   // financial core
-  var d3 = Math.exp(-dist2(x, z, 196, 196) / (2 * 40 * 40)) * 0.42;
-  var n = fbm(x * 0.055, z * 0.055, 17, 3) * 0.34;
+  var d1 = Math.exp(-dist2(x, z, 106 * SC, 176 * SC) / (2 * 46 * SC * 46 * SC));   // midtown core
+  var d2 = Math.exp(-dist2(x, z, 100 * SC, 214 * SC) / (2 * 28 * SC * 28 * SC));   // financial core
+  var d3 = Math.exp(-dist2(x, z, 196 * SC, 196 * SC) / (2 * 40 * SC * 40 * SC)) * 0.42;
+  var n = fbm(x * 0.055 * NF, z * 0.055 * NF, 17, 3) * 0.34;
   return clamp(Math.max(d1, Math.max(d2, d3)) * 0.92 + n, 0, 1);
 }
 
@@ -888,24 +946,24 @@ function genWaterAndZones() {
     for (x = 0; x < N; x++) {
       i = idx(x, z);
       var isW = 0;
-      if (x < 5 || x > 250 || z < 4) isW = 1;
+      if (x < 5 * SC || x > 250 * SC || z < 4 * SC) isW = 1;
       if (z > bayZ(x)) isW = 1;
-      if (x > hl && x < hr && z > 22 && z < 236) isW = 1;
-      if (x > el && x < er && z > 22 && z < 236) isW = 1;
+      if (x > hl && x < hr && z > 22 * SC && z < 236 * SC) isW = 1;
+      if (x > el && x < er && z > 22 * SC && z < 236 * SC) isW = 1;
       W.water[i] = isW;
     }
   }
   // islands in the harbour (statue island + two small ones)
-  carveIsland(48, 240, 8, 6, 1);
-  carveIsland(72, 244, 5, 4, 0);
-  carveIsland(128, 243, 4, 4, 0);
+  carveIsland(48 * SC, 240 * SC, 8 * SC, 6 * SC, 1);
+  carveIsland(72 * SC, 244 * SC, 5 * SC, 4 * SC, 0);
+  carveIsland(128 * SC, 243 * SC, 4 * SC, 4 * SC, 0);
   // terrain: flat city, gentle hills on the northern edge
   for (z = 0; z < N; z++) for (x = 0; x < N; x++) {
     i = idx(x, z);
     if (W.water[i]) { W.terr[i] = 0; continue; }
     var h = 0;
-    if (z < 30) h = Math.round(fbm(x * 0.045, z * 0.045, 23, 3) * 11 * clamp((30 - z) / 16, 0, 1));
-    else if (x > 236) h = Math.round(fbm(x * 0.05, z * 0.05, 29, 2) * 7 * clamp((x - 236) / 10, 0, 1));
+    if (z < 30 * SC) h = Math.round(fbm(x * 0.045 * NF, z * 0.045 * NF, 23, 3) * 11 * clamp((30 * SC - z) / (16 * SC), 0, 1));
+    else if (x > 236 * SC) h = Math.round(fbm(x * 0.05 * NF, z * 0.05 * NF, 29, 2) * 7 * clamp((x - 236 * SC) / (10 * SC), 0, 1));
     W.terr[i] = clamp(h, 0, 26);
   }
   // zones
@@ -913,16 +971,15 @@ function genWaterAndZones() {
     i = idx(x, z);
     if (W.water[i]) { W.zone[i] = Z_WATER; continue; }
     var zn = Z_NATURE;
-    if (z < 30 || z > 234) zn = Z_NATURE;
-    else if (x >= MAN_X0 - 6 && x <= MAN_X1 + 4) {
+    if (z < 30 * SC || z > 234 * SC) zn = Z_NATURE;
+    else if (x >= MAN_X0 - 6 * SC && x <= MAN_X1 + 4 * SC) {
       if (x >= PARK_X0 && x < PARK_X1 && z >= PARK_Z0 && z < PARK_Z1) zn = Z_PARK;
       else if (x >= NEON_X0 && x < NEON_X1 && z >= NEON_Z0 && z < NEON_Z1) zn = Z_NEON;
-      else if (z >= 196) zn = Z_FIN;
-      else if (z >= 148) zn = Z_MID;
-      else if (z >= 96) zn = Z_MID;
+      else if (z >= 196 * SC) zn = Z_FIN;
+      else if (z >= 96 * SC) zn = Z_MID;
       else zn = Z_UP;
-    } else if (x >= BOR_X0 - 4) zn = (z >= 150) ? Z_BRK : Z_QNS;
-    else if (x <= WST_X1 + 4) zn = Z_WEST;
+    } else if (x >= BOR_X0 - 4 * SC) zn = (z >= 150 * SC) ? Z_BRK : Z_QNS;
+    else if (x <= WST_X1 + 4 * SC) zn = Z_WEST;
     else zn = Z_NATURE;
     W.zone[i] = zn;
   }
@@ -991,10 +1048,14 @@ ZONE_LEVELS[Z_FIN] = 21; ZONE_LEVELS[Z_MID] = 25; ZONE_LEVELS[Z_NEON] = 12;
 ZONE_LEVELS[Z_UP] = 9; ZONE_LEVELS[Z_BRK] = 5; ZONE_LEVELS[Z_QNS] = 3;
 ZONE_LEVELS[Z_WEST] = 8; ZONE_LEVELS[Z_PARK] = 2; ZONE_LEVELS[Z_NATURE] = 2;
 var ZONE_STYLES = {};
-ZONE_STYLES[Z_FIN] = [0, 0, 1, 2, 2]; ZONE_STYLES[Z_MID] = [0, 1, 2, 2, 6];
-ZONE_STYLES[Z_NEON] = [6, 6, 2, 0]; ZONE_STYLES[Z_UP] = [3, 3, 4, 6, 1];
-ZONE_STYLES[Z_BRK] = [4, 4, 5, 6, 3]; ZONE_STYLES[Z_QNS] = [7, 7, 3, 5, 6];
-ZONE_STYLES[Z_WEST] = [2, 5, 5, 3, 0]; ZONE_STYLES[Z_NATURE] = [7, 7, 5];
+ZONE_STYLES[Z_FIN]  = [0, 1, 11, 2, 3, 10];
+ZONE_STYLES[Z_MID]  = [0, 1, 11, 4, 2, 3, 10];
+ZONE_STYLES[Z_NEON] = [8, 8, 11, 0, 4];
+ZONE_STYLES[Z_UP]   = [5, 6, 2, 8, 9, 4];
+ZONE_STYLES[Z_BRK]  = [6, 6, 5, 7, 8, 9];
+ZONE_STYLES[Z_QNS]  = [9, 9, 5, 7, 6];
+ZONE_STYLES[Z_WEST] = [4, 7, 7, 5, 0];
+ZONE_STYLES[Z_NATURE] = [9, 9, 7];
 
 function makeBlock(bx, bz, w, d, opts) {
   var x, z, i;
@@ -1060,6 +1121,7 @@ function addBuilding(x, z, w, d, levels, style, zone) {
     var i = idx(cx, cz);
     W.bldH[i] = Math.min(65535, tiers[0].y1);
     W.bldT[i] = style + 1;
+    W.bldId[i] = b.id + 1;
   }
   var key = ((z / CH) | 0) * NC + ((x / CH) | 0);
   if (!BCH[key]) BCH[key] = [];
@@ -1147,23 +1209,23 @@ function genPark() {
     W.park[i] = 1; W.terr[i] = 0; W.zone[i] = Z_PARK;
   }
   // two lakes
-  parkLake(90, 116, 9, 6); parkLake(110, 134, 7, 5);
+  parkLake(90 * SC, 116 * SC, 9 * SC, 6 * SC); parkLake(110 * SC, 134 * SC, 7 * SC, 5 * SC);
   // winding paths
   for (z = PARK_Z0 + 1; z < PARK_Z1 - 1; z++) {
-    var px1 = Math.round(PARK_X0 + 8 + Math.sin(z * 0.16) * 5 + fbm(z * 0.08, 1, 33, 2) * 5);
-    var px2 = Math.round(PARK_X1 - 10 + Math.cos(z * 0.13) * 5);
+    var px1 = Math.round(PARK_X0 + 8 * SC + Math.sin(z * 0.16 * NF) * 5 * SC + fbm(z * 0.08 * NF, 1, 33, 2) * 5 * SC);
+    var px2 = Math.round(PARK_X1 - 10 * SC + Math.cos(z * 0.13 * NF) * 5 * SC);
     setPath(px1, z); setPath(px1 + 1, z); setPath(px2, z); setPath(px2 + 1, z);
   }
   for (x = PARK_X0 + 1; x < PARK_X1 - 1; x++) {
-    var pz1 = Math.round(PARK_Z0 + 12 + Math.sin(x * 0.15) * 4);
-    var pz2 = Math.round(PARK_Z1 - 14 + Math.cos(x * 0.11) * 4);
+    var pz1 = Math.round(PARK_Z0 + 12 * SC + Math.sin(x * 0.15 * NF) * 4 * SC);
+    var pz2 = Math.round(PARK_Z1 - 14 * SC + Math.cos(x * 0.11 * NF) * 4 * SC);
     setPath(x, pz1); setPath(x, pz2);
   }
   // trees, rocks, benches
   for (z = PARK_Z0; z < PARK_Z1; z++) for (x = PARK_X0; x < PARK_X1; x++) {
     i = idx(x, z);
     if (W.water[i] || W.park[i] !== 1) continue;
-    var n = fbm(x * 0.22, z * 0.22, 43, 2);
+    var n = fbm(x * 0.22 * NF, z * 0.22 * NF, 43, 2);
     if (n > 0.56 && rngWorld.chance(0.5)) W.tree[i] = 1 + (rngWorld.r() * 2 | 0);
     else if (rngWorld.chance(0.012)) addProp(x, z, { t: 'rock' });
     else if (rngWorld.chance(0.008)) addProp(x, z, { t: 'hedge' });
@@ -1173,7 +1235,7 @@ function genPark() {
     if (W.park[i] === 4 && rngWorld.chance(0.5)) addProp(x, z, { t: 'bench', rot: rngWorld.chance(0.5) ? 0 : Math.PI / 2 });
   }
   // small stone bridge over the lake outlet
-  for (x = 99; x <= 103; x++) { var ii = idx(x, 122); W.park[ii] = 4; W.water[ii] = 0; addProp(x, 122, { t: 'parkbridge' }); }
+  for (x = 99 * SC; x <= 103 * SC; x++) { var ii = idx(x, 122 * SC); W.park[ii] = 4; W.water[ii] = 0; addProp(x, 122 * SC, { t: 'parkbridge' }); }
 }
 function setPath(x, z) {
   if (!inGrid(x, z)) return;
@@ -1185,7 +1247,7 @@ function parkLake(cx, cz, rx, rz) {
   for (var z = cz - rz; z <= cz + rz; z++) for (var x = cx - rx; x <= cx + rx; x++) {
     if (!inGrid(x, z)) continue;
     var dx = (x - cx) / rx, dz = (z - cz) / rz;
-    if (dx * dx + dz * dz + fbm(x * 0.3, z * 0.3, 53, 2) * 0.25 <= 1) {
+    if (dx * dx + dz * dz + fbm(x * 0.3 * NF, z * 0.3 * NF, 53, 2) * 0.25 <= 1) {
       var i = idx(x, z);
       W.water[i] = 1; W.park[i] = 3; W.tree[i] = 0; W.bldH[i] = 0; W.road[i] = 0;
     }
@@ -1201,7 +1263,7 @@ function genDetails() {
     var zn = W.zone[i];
     // nature: forests and boulders
     if (zn === Z_NATURE && !W.road[i] && !W.bldH[i]) {
-      var nn = fbm(x * 0.18, z * 0.18, 63, 3);
+      var nn = fbm(x * 0.18 * NF, z * 0.18 * NF, 63, 3);
       if (nn > 0.58 && rngWorld.chance(0.42)) W.tree[i] = 1 + (rngWorld.r() * 2 | 0);
       else if (nn < 0.3 && rngWorld.chance(0.05)) addProp(x, z, { t: 'rock' });
       continue;
@@ -1250,7 +1312,7 @@ function makePier(x, z) {
     if (inGrid(nx, nz) && W.water[idx(nx, nz)]) { d = dirs[k]; break; }
   }
   if (!d) return;
-  var len = 4 + (rngWorld.r() * 6 | 0), wdt = rngWorld.chance(0.5) ? 2 : 3;
+  var len = (4 + (rngWorld.r() * 6 | 0)) * SC, wdt = rngWorld.chance(0.5) ? 2 : 3;
   for (var s = 1; s <= len; s++) for (var o = 0; o < wdt; o++) {
     var px2 = x + d[0] * s + (d[0] ? 0 : o - 1), pz2 = z + d[1] * s + (d[1] ? 0 : o - 1);
     if (!inGrid(px2, pz2)) continue;
@@ -1267,21 +1329,21 @@ function generateWorld(report) {
   genWaterAndZones();
   reserveLandmarks();
   report && report('بناء الجسور والأنفاق…', 0.14);
-  makeBridgeEW(210, 2, 138, 150, 180, 192, 14, [151, 179]);   // suspension bridge to Brooklyn
-  makeBridgeEW(120, 2, 140, 150, 180, 190, 12, null);         // Queens bridge
-  makeBridgeEW(90, 2, 12, 24, 58, 68, 14, [25, 57]);          // Hudson crossing
+  makeBridgeEW(210 * SC, 2, 138 * SC, 150 * SC, 180 * SC, 192 * SC, 16, [151 * SC, 179 * SC]);  // to Brooklyn
+  makeBridgeEW(120 * SC, 2, 140 * SC, 150 * SC, 180 * SC, 190 * SC, 13, null);                  // Queens bridge
+  makeBridgeEW(90 * SC, 2, 12 * SC, 24 * SC, 58 * SC, 68 * SC, 16, [25 * SC, 57 * SC]);         // Hudson crossing
   report && report('رسم الشوارع…', 0.24);
   genDistrict(MAN_X0, MAN_X1, MAN_Z0, MAN_Z1, 12, 3, 6, 2, {});
   markRoadAxis(MAN_X0, MAN_X1, MAN_Z0, MAN_Z1, 12, 3, 6, 2);
-  genDistrict(BOR_X0, BOR_X1, 150, 232, 10, 2, 10, 2, {});
-  markRoadAxis(BOR_X0, BOR_X1, 150, 232, 10, 2, 10, 2);
-  genDistrict(BOR_X0, BOR_X1, 30, 150, 10, 2, 10, 2, {});
-  markRoadAxis(BOR_X0, BOR_X1, 30, 150, 10, 2, 10, 2);
-  genDistrict(WST_X0, WST_X1, 30, 232, 10, 2, 10, 2, {});
-  markRoadAxis(WST_X0, WST_X1, 30, 232, 10, 2, 10, 2);
+  genDistrict(BOR_X0, BOR_X1, 150 * SC, 232 * SC, 10, 2, 10, 2, {});
+  markRoadAxis(BOR_X0, BOR_X1, 150 * SC, 232 * SC, 10, 2, 10, 2);
+  genDistrict(BOR_X0, BOR_X1, 30 * SC, 150 * SC, 10, 2, 10, 2, {});
+  markRoadAxis(BOR_X0, BOR_X1, 30 * SC, 150 * SC, 10, 2, 10, 2);
+  genDistrict(WST_X0, WST_X1, 30 * SC, 232 * SC, 10, 2, 10, 2, {});
+  markRoadAxis(WST_X0, WST_X1, 30 * SC, 232 * SC, 10, 2, 10, 2);
   report && report('زراعة الحديقة المركزية…', 0.42);
   genPark();
-  makeTunnelEW(132, 2, PARK_X0, PARK_X1 - 1, 10);
+  makeTunnelEW(132 * SC, 2, PARK_X0, PARK_X1 - 1, 10);
   report && report('رفع المعالم…', 0.52);
   buildLandmarks();
   report && report('تفاصيل الشوارع…', 0.62);
@@ -1530,7 +1592,7 @@ function emitBuilding(mb, b) {
     mb.box(M_ATLAS, rx1 - pw, ry, rz0 + pw, rx1, ry + ph, rz1 - pw, 'atlas', ATL.concrete, 55);
   }
   // pitched roof on the low houses out in the boroughs
-  if (b.top <= 20 && (b.t === 7 || b.t === 4 || b.t === 3) && t.w <= 3 && t.d <= 3) {
+  if (b.top <= 20 && (b.t === 9 || b.t === 6 || b.t === 5) && t.w <= 3 && t.d <= 3) {
     for (var pr = 0; pr < 3; pr++) {
       var ins = 0.5 + pr * 0.85;
       mb.box(M_ATLAS, rx0 + ins, ry + pr * 1.0, rz0 + ins, rx1 - ins, ry + (pr + 1) * 1.0, rz1 - ins,
@@ -1557,7 +1619,7 @@ function emitBuilding(mb, b) {
     }
   }
   // shopfront awning at street level
-  if ((b.t === 6 || b.t === 4) && b.h > 8) {
+  if ((b.t === 8 || b.t === 5) && b.h > 8) {
     mb.box(M_ATLAS, rx0 - 0.8, 4.2, rz0 - 0.8, rx1 + 0.8, 4.9, rz0 + 0.6, 'atlas', ATL.red, 55);
   }
 }
@@ -1716,16 +1778,16 @@ function lmBounds(l) {
   };
 }
 var LM_DEFS = [
-  { id: 'artdeco', name: 'برج الآرت ديكو', cx: 108, cz: 168, w: 6, d: 6, top: 186, sh: 168 },
-  { id: 'glass',   name: 'البرج الزجاجي',  cx: 95,  cz: 192, w: 5, d: 5, top: 212, sh: 198 },
-  { id: 'flat',    name: 'المبنى المثلث',  cx: 116, cz: 154, w: 5, d: 6, top: 82,  sh: 76 },
-  { id: 'station', name: 'المحطة المركزية', cx: 86, cz: 158, w: 11, d: 7, top: 44, sh: 30 },
-  { id: 'neon',    name: 'قوس النيون',     cx: 103, cz: 157, w: 3, d: 3, top: 66,  sh: 58 },
-  { id: 'statue',  name: 'التمثال الضخم',  cx: 46,  cz: 238, w: 5, d: 5, top: 76,  sh: 24 },
-  { id: 'gov',     name: 'المبنى الحكومي', cx: 97,  cz: 220, w: 8, d: 5, top: 52,  sh: 26 },
-  { id: 'harbor',  name: 'المرفأ',         cx: 147, cz: 204, w: 4, d: 10, top: 30, sh: 18 },
-  { id: 'fount',   name: 'نافورة الحديقة', cx: 100, cz: 112, w: 4, d: 4, top: 10,  sh: 2.6 },
-  { id: 'obs',     name: 'برج المرصد',     cx: 196, cz: 196, w: 5, d: 5, top: 120, sh: 96, inset: 1 }
+  { id: 'artdeco', name: 'برج الآرت ديكو', cx: 108 * SC, cz: 168 * SC, w: 6, d: 6, top: 186, sh: 168 },
+  { id: 'glass',   name: 'البرج الزجاجي',  cx: 95 * SC,  cz: 192 * SC, w: 5, d: 5, top: 212, sh: 198 },
+  { id: 'flat',    name: 'المبنى المثلث',  cx: 116 * SC, cz: 154 * SC, w: 5, d: 6, top: 82,  sh: 76 },
+  { id: 'station', name: 'المحطة المركزية', cx: 86 * SC, cz: 158 * SC, w: 11, d: 7, top: 44, sh: 30 },
+  { id: 'neon',    name: 'قوس النيون',     cx: 103 * SC, cz: 157 * SC, w: 3, d: 3, top: 66,  sh: 58 },
+  { id: 'statue',  name: 'التمثال الضخم',  cx: 46 * SC,  cz: 238 * SC, w: 5, d: 5, top: 76,  sh: 24 },
+  { id: 'gov',     name: 'المبنى الحكومي', cx: 97 * SC,  cz: 220 * SC, w: 8, d: 5, top: 52,  sh: 26 },
+  { id: 'harbor',  name: 'المرفأ',         cx: 147 * SC, cz: 204 * SC, w: 4, d: 10, top: 30, sh: 18 },
+  { id: 'fount',   name: 'نافورة الحديقة', cx: 100 * SC, cz: 112 * SC, w: 4, d: 4, top: 10,  sh: 2.6 },
+  { id: 'obs',     name: 'برج المرصد',     cx: 196 * SC, cz: 196 * SC, w: 5, d: 5, top: 120, sh: 96, inset: 1 }
 ];
 function reserveLandmarks() {
   for (var i = 0; i < LM_DEFS.length; i++) {
@@ -1759,7 +1821,7 @@ var LM_BUILD = {
     var steps = [[0, 0, 74], [2, 2, 118], [4, 4, 150], [6, 6, 168]];
     for (var s = 0; s < steps.length; s++) {
       var k = steps[s];
-      mb.box(FAC0 + 1, b.x0 + k[0], s === 0 ? 0 : steps[s - 1][2] - 2, b.z0 + k[1],
+      mb.box(FAC0 + 3, b.x0 + k[0], s === 0 ? 0 : steps[s - 1][2] - 2, b.z0 + k[1],
              b.x1 - k[0], k[2], b.z1 - k[1], 'facade', 0, 51);
       mb.groundRect(M_ROOF, b.x0 + k[0], b.z0 + k[1], b.x1 - k[0], b.z1 - k[1], k[2]);
     }
@@ -1786,14 +1848,14 @@ var LM_BUILD = {
     for (var r = 0; r < rows; r++) {
       var t = r / (rows - 1);
       var x1 = b.x0 + (b.x1 - b.x0) * (1 - t * 0.78) ;
-      mb.box(FAC0 + 1, b.x0, 0, b.z0 + r * dz, x1, 76, b.z0 + (r + 1) * dz, 'facade', 0, 51);
+      mb.box(FAC0 + 2, b.x0, 0, b.z0 + r * dz, x1, 76, b.z0 + (r + 1) * dz, 'facade', 0, 51);
       mb.groundRect(M_ROOF, b.x0, b.z0 + r * dz, x1, b.z0 + (r + 1) * dz, 76);
     }
     mb.box(M_ATLAS, b.x0 + 1, 76, b.z0 + 1, b.x0 + 5, 82, b.z0 + 5, 'atlas', ATL.concrete, 55);
   },
   // classic station: colonnade, big hall, clock
   station: function (mb, b, l) {
-    mb.box(FAC0 + 1, b.x0, 0, b.z0, b.x1, 30, b.z1, 'facade', 0, 51);
+    mb.box(FAC0 + 2, b.x0, 0, b.z0, b.x1, 30, b.z1, 'facade', 0, 51);
     mb.groundRect(M_ROOF, b.x0, b.z0, b.x1, b.z1, 30);
     mb.box(M_ATLAS, b.x0 + 4, 30, b.z0 + 3, b.x1 - 4, 42, b.z1 - 3, 'atlas', ATL.stone, 55);
     for (var c = 0; c < 7; c++) {
@@ -1853,7 +1915,7 @@ var LM_BUILD = {
   },
   // harbour: warehouses and gantry cranes
   harbor: function (mb, b) {
-    mb.box(FAC0 + 5, b.x0, 0, b.z0, b.x1 - 6, 18, b.z1, 'facade', 0, 51);
+    mb.box(FAC0 + 7, b.x0, 0, b.z0, b.x1 - 6, 18, b.z1, 'facade', 0, 51);
     mb.groundRect(M_ROOF, b.x0, b.z0, b.x1 - 6, b.z1, 18);
     for (var c = 0; c < 3; c++) {
       var cz = b.z0 + 6 + c * 10;
@@ -1882,12 +1944,300 @@ var LM_BUILD = {
   obs: function (mb, b) {
     var mx = (b.x0 + b.x1) / 2, mz = (b.z0 + b.z1) / 2;
     mb.box(M_ATLAS, mx - 3.5, 0, mz - 3.5, mx + 3.5, 84, mz + 3.5, 'atlas', ATL.concrete, 51);
-    mb.box(FAC0 + 2, mx - 7, 84, mz - 7, mx + 7, 96, mz + 7, 'facade', 0, 51);
+    mb.box(FAC0 + 4, mx - 7, 84, mz - 7, mx + 7, 96, mz + 7, 'facade', 0, 51);
     mb.groundRect(M_ROOF, mx - 7, mz - 7, mx + 7, mz + 7, 96);
     mb.box(M_ATLAS, mx - 2.4, 96, mz - 2.4, mx + 2.4, 112, mz + 2.4, 'atlas', ATL.steel, 55);
     mb.box(M_GLOW, mx - 1.4, 112, mz - 1.4, mx + 1.4, 118, mz + 1.4, 'atlas', ATL.red, 55);
   }
 };
+
+/* -------------------------------------------------------------------------
+   DISTANT SKYLINE (LOD)
+   One static, vertex coloured silhouette of every tall building in the world,
+   split into 16 regions so the frustum can drop most of it. Each box is inset
+   slightly inside the real building, so the moment a chunk streams in the
+   detailed geometry covers its own silhouette — no popping, no holes.
+   ------------------------------------------------------------------------- */
+var lodGroup = null, lodMeshes = [];
+var LOD_MIN_TOP = 58;          // only real towers read from a distance
+function lodColor(h, zone) {
+  var t = clamp((h - 40) / 180, 0, 1);
+  var r = 0.30 + t * 0.30, g = 0.34 + t * 0.30, b = 0.42 + t * 0.30;
+  if (zone === Z_BRK || zone === Z_QNS) { r *= 1.05; g *= 0.96; b *= 0.9; }
+  if (zone === Z_NEON) { r *= 1.1; b *= 1.06; }
+  return ((r * 255) << 16) | ((g * 255) << 8) | (b * 255 | 0);
+}
+function buildSkylineLOD() {
+  var REG = 4, span = N / REG;                       // 4 x 4 regions
+  var vbs = [], i;
+  for (i = 0; i < REG * REG; i++) vbs.push(new VB());
+  function regionOf(cx, cz) {
+    return clamp((cz / span) | 0, 0, REG - 1) * REG + clamp((cx / span) | 0, 0, REG - 1);
+  }
+  for (i = 0; i < BUILDINGS.length; i++) {
+    var b = BUILDINGS[i];
+    if (b.top < LOD_MIN_TOP) continue;
+    var t0 = b.tiers[0];
+    var x0 = c2w(t0.x) - CELL * 0.5 + 0.6, z0 = c2w(t0.z) - CELL * 0.5 + 0.6;
+    var x1 = x0 + t0.w * CELL - 1.2, z1 = z0 + t0.d * CELL - 1.2;
+    if (x1 <= x0 || z1 <= z0) continue;
+    vbs[regionOf(t0.x, t0.z)].box(x0, 0, z0, x1, b.top - 0.6, z1, lodColor(b.top, b.zone));
+  }
+  var S = 8;
+  for (var cz = 0; cz < N; cz += S) for (var cx = 0; cx < N; cx += S) {
+    var land = 0, road = 0, park = 0, sand = 0, hSum = 0, n2 = 0;
+    for (var dz = 0; dz < S; dz += 2) for (var dx = 0; dx < S; dx += 2) {
+      var ii = idx(cx + dx, cz + dz);
+      n2++;
+      if (W.water[ii]) continue;
+      land++; hSum += W.terr[ii];
+      if (W.road[ii]) road++;
+      else if (W.park[ii] === 1 || W.park[ii] === 4) park++;
+      else if (W.park[ii] === 5) sand++;
+    }
+    if (land < n2 * 0.45) continue;                  // mostly water: let the sea show
+    var c = 0x3c4048;
+    if (park > road) c = 0x3f5c38; else if (sand > road) c = 0x8f8060; else if (road > land * 0.4) c = 0x35383e;
+    var y = (hSum / Math.max(1, land)) - 0.35;
+    var wx0 = c2w(cx) - CELL * 0.5, wz0 = c2w(cz) - CELL * 0.5;
+    vbs[regionOf(cx, cz)].box(wx0, y - 1.2, wz0, wx0 + S * CELL, y, wz0 + S * CELL, c);
+  }
+  lodGroup = new THREE.Group();
+  var mat = new THREE.MeshLambertMaterial({ vertexColors: true });
+  for (i = 0; i < vbs.length; i++) {
+    if (vbs[i].n === 0) continue;
+    var m = new THREE.Mesh(vbs[i].build(), mat);
+    m.matrixAutoUpdate = false;
+    lodGroup.add(m); lodMeshes.push(m);
+  }
+  scene.add(lodGroup);
+}
+
+
+/* -------------------------------------------------------------------------
+   INTERIORS — you can walk into a building
+   Rooms are generated on demand from the building's own id, so the same door
+   always leads to the same place. They are built far below the city and the
+   outside world is hidden while you are inside, which keeps it cheap.
+   ------------------------------------------------------------------------- */
+var INTERIOR = {
+  group: null, mesh: null, active: null, solids: [], floorY: -600,
+  room: { x0: 0, x1: 0, z0: 0, z1: 0, y0: 0, y1: 0 },
+  back: { x: 0, y: 0, z: 0, yaw: 0 }, door: { x: 0, z: 0 }, occupants: [],
+  KINDS: ['shop', 'lobby', 'apartment', 'diner'],
+  kindFor: function (b) {
+    if (b.zone === Z_NEON || b.t === 8) return 'shop';
+    if (b.top > 70) return 'lobby';
+    if (b.zone === Z_BRK || b.zone === Z_QNS || b.t === 9 || b.t === 6) return 'apartment';
+    return ihash(b.id, 3, 7711) < 0.5 ? 'diner' : 'shop';
+  },
+  init: function () {
+    this.group = new THREE.Group();
+    this.group.visible = false;
+    scene.add(this.group);
+  },
+  clear: function () {
+    if (this.mesh) { this.group.remove(this.mesh); this.mesh.geometry.dispose(); this.mesh = null; }
+    for (var i = 0; i < this.occupants.length; i++) this.group.remove(this.occupants[i].mesh);
+    this.occupants.length = 0;
+    this.solids.length = 0;
+  },
+  solid: function (x0, y0, z0, x1, y1, z1) { this.solids.push([x0, y0, z0, x1, y1, z1]); },
+  build: function (kind, seed) {
+    this.clear();
+    var mb = new MB(), F = this.floorY;
+    var W2 = 30, D = 22, H = 7.5;                       // room, in units
+    var x0 = -W2 / 2, x1 = W2 / 2, z0 = -D / 2, z1 = D / 2;
+    this.room = { x0: x0 + 0.6, x1: x1 - 0.6, z0: z0 + 0.6, z1: z1 - 0.6, y0: F - 1, y1: F + H - 0.4 };
+    var rnd = function (a, b2) { return a + ihash(seed, a * 13 + b2 * 7, 9001) * (b2 - a); };
+    // shell
+    mb.groundRect(kind === 'apartment' ? M_WOOD : M_PLAZA, x0, z0, x1, z1, F);
+    mb.box(M_ATLAS, x0 - 0.6, F, z0 - 0.6, x1 + 0.6, F + H, z0, 'atlas', ATL.concrete, 55);
+    mb.box(M_ATLAS, x0 - 0.6, F, z1, x1 + 0.6, F + H, z1 + 0.6, 'atlas', ATL.concrete, 55);
+    mb.box(M_ATLAS, x0 - 0.6, F, z0, x0, F + H, z1, 'atlas', ATL.concrete, 55);
+    mb.box(M_ATLAS, x1, F, z0, x1 + 0.6, F + H, z1, 'atlas', ATL.concrete, 55);
+    mb.box(M_ATLAS, x0 - 0.6, F + H, z0 - 0.6, x1 + 0.6, F + H + 0.5, z1 + 0.6, 'atlas', ATL.white, 55);
+    this.solid(x0 - 1.2, F, z0 - 1.2, x1 + 1.2, F + H, z0);      // walls block
+    this.solid(x0 - 1.2, F, z1, x1 + 1.2, F + H, z1 + 1.2);
+    this.solid(x0 - 1.2, F, z0, x0, F + H, z1);
+    this.solid(x1, F, z0, x1 + 1.2, F + H, z1);
+    // ceiling lights
+    for (var lx = -9; lx <= 9; lx += 9) for (var lz = -6; lz <= 6; lz += 6) {
+      mb.box(M_GLOW, lx - 2.2, F + H - 0.42, lz - 1.0, lx + 2.2, F + H - 0.05, lz + 1.0, 'atlas', ATL.lamp, 55);
+    }
+    // shop window and the way out, always on the -Z wall
+    mb.box(M_GLOW, x0 + 2, F + 1.6, z0 - 0.05, -2.2, F + 5.2, z0 + 0.12, 'atlas', ATL.white, 55);
+    mb.box(M_GLOW, 2.2, F + 1.6, z0 - 0.05, x1 - 2, F + 5.2, z0 + 0.12, 'atlas', ATL.white, 55);
+    mb.box(M_ATLAS, -2.0, F, z0 - 0.05, 2.0, F + 5.4, z0 + 0.14, 'atlas', ATL.wood, 55);
+    mb.box(M_GLOW, -1.7, F + 0.3, z0 + 0.14, 1.7, F + 5.1, z0 + 0.2, 'atlas', ATL.lamp, 55);
+    this.door.x = 0; this.door.z = z0 + 1.6;
+
+    if (kind === 'shop') {
+      for (var r = 0; r < 3; r++) {                       // shelving runs
+        var sz = z0 + 6 + r * 5;
+        mb.box(M_ATLAS, x0 + 3, F, sz, x1 - 9, F + 2.6, sz + 1.6, 'atlas', ATL.metal, 55);
+        this.solid(x0 + 3, F, sz, x1 - 9, F + 2.6, sz + 1.6);
+        for (var g = 0; g < 8; g++) {
+          var gx = x0 + 3.4 + g * 2.1;
+          var tile = [ATL.red, ATL.yellow, ATL.green, ATL.white][(g + r) % 4];
+          mb.box(M_ATLAS, gx, F + 2.6, sz + 0.2, gx + 1.6, F + 3.3, sz + 1.4, 'atlas', tile, 55);
+        }
+      }
+      mb.box(M_ATLAS, x1 - 7, F, z0 + 4, x1 - 2, F + 2.2, z0 + 9, 'atlas', ATL.wood, 55);   // counter
+      this.solid(x1 - 7, F, z0 + 4, x1 - 2, F + 2.2, z0 + 9);
+      mb.box(M_ATLAS, x1 - 5.6, F + 2.2, z0 + 5.6, x1 - 4.2, F + 3.0, z0 + 7.0, 'atlas', ATL.dark, 55);
+      this.addPerson(x1 - 4.6, z0 + 11, Math.PI, 'صاحب المتجر',
+        ['أهلًا. كل شيء بسعر التكلفة اليوم… تقريبًا.', 'إن كنت تبحث عن أحد، اسأل عند المحطة.']);
+    } else if (kind === 'lobby') {
+      for (var c = -1; c <= 1; c += 2) for (var c2 = -1; c2 <= 1; c2 += 2) {
+        mb.box(M_ATLAS, c * 8 - 0.8, F, c2 * 6 - 0.8, c * 8 + 0.8, F + H, c2 * 6 + 0.8, 'atlas', ATL.stone, 55);
+        this.solid(c * 8 - 0.8, F, c2 * 6 - 0.8, c * 8 + 0.8, F + H, c2 * 6 + 0.8);
+      }
+      mb.box(M_ATLAS, -6, F, z1 - 5, 6, F + 2.4, z1 - 2.6, 'atlas', ATL.stone, 55);       // reception
+      this.solid(-6, F, z1 - 5, 6, F + 2.4, z1 - 2.6);
+      mb.box(M_ATLAS, -6, F + 2.4, z1 - 5, 6, F + 2.7, z1 - 2.6, 'atlas', ATL.gold, 55);
+      for (var e2 = -1; e2 <= 1; e2 += 2) {                                               // lift doors
+        mb.box(M_ATLAS, e2 * 5 - 2, F, z1 - 0.2, e2 * 5 + 2, F + 5, z1 + 0.1, 'atlas', ATL.steel, 55);
+        mb.box(M_GLOW, e2 * 5 - 0.5, F + 5.1, z1 - 0.2, e2 * 5 + 0.5, F + 5.5, z1 + 0.1, 'atlas', ATL.red, 55);
+      }
+      this.addPerson(0, z1 - 6.5, 0, 'موظف الاستقبال',
+        ['المصاعد مغلقة بعد التاسعة.', 'لا يُسمح بالتصوير في البهو.']);
+    } else if (kind === 'apartment') {
+      mb.box(M_ATLAS, x0 + 2, F, z1 - 7, x0 + 10, F + 1.4, z1 - 2, 'atlas', ATL.red, 55);      // bed
+      this.solid(x0 + 2, F, z1 - 7, x0 + 10, F + 1.4, z1 - 2);
+      mb.box(M_ATLAS, x0 + 2, F + 1.4, z1 - 3.4, x0 + 10, F + 1.9, z1 - 2, 'atlas', ATL.white, 55);
+      mb.box(M_ATLAS, 2, F, -2, 9, F + 1.5, 3, 'atlas', ATL.wood, 55);                          // sofa
+      this.solid(2, F, -2, 9, F + 1.5, 3);
+      mb.box(M_ATLAS, 2, F + 1.5, 2, 9, F + 3.0, 3, 'atlas', ATL.wood, 55);
+      mb.box(M_ATLAS, 3.5, F, -7, 7.5, F + 1.2, -4, 'atlas', ATL.wood, 55);                     // table
+      this.solid(3.5, F, -7, 7.5, F + 1.2, -4);
+      mb.box(M_GLOW, 4.2, F + 1.6, -7.6, 6.8, F + 3.4, -7.2, 'atlas', ATL.white, 55);           // tv
+      mb.box(M_ATLAS, x0 + 2, F, z0 + 2, x0 + 6, F + 5, z0 + 3, 'atlas', ATL.metal, 55);        // kitchen
+      this.solid(x0 + 2, F, z0 + 2, x0 + 6, F + 5, z0 + 3);
+      this.addPerson(x0 + 8, 4, -0.6, 'الجار',
+        ['الجدران هنا رقيقة. أسمع كل شيء.', 'رأيت شخصًا يسأل عنك أمس.']);
+    } else {                                                                                     // diner
+      mb.box(M_ATLAS, x0 + 3, F, 2, x1 - 3, F + 2.2, 4, 'atlas', ATL.white, 55);                 // long counter
+      this.solid(x0 + 3, F, 2, x1 - 3, F + 2.2, 4);
+      for (var st = 0; st < 8; st++) {
+        var sx = x0 + 4.5 + st * 2.8;
+        mb.box(M_ATLAS, sx - 0.5, F, 0.2, sx + 0.5, F + 1.6, 1.2, 'atlas', ATL.red, 55);
+      }
+      for (var bth = 0; bth < 3; bth++) {                                                        // booths
+        var bz = z1 - 3 - bth * 0;
+        var bx = x0 + 4 + bth * 8;
+        mb.box(M_ATLAS, bx, F, z1 - 6, bx + 5, F + 1.3, z1 - 2, 'atlas', ATL.wood, 55);
+        this.solid(bx, F, z1 - 6, bx + 5, F + 1.3, z1 - 2);
+        mb.box(M_ATLAS, bx, F + 1.3, z1 - 2.8, bx + 5, F + 3.2, z1 - 2, 'atlas', ATL.wood, 55);
+      }
+      mb.box(M_GLOW, x0 + 3, F + 4.4, 4.1, x1 - 3, F + 5.4, 4.4, 'atlas', ATL.neon, 55);         // menu board
+      this.addPerson(0, 6, Math.PI, 'النادلة',
+        ['قهوة؟ الإبريق طازج… منذ ساعتين.', 'الجميع هنا يعرف الجميع. اسأل وستعرف.']);
+    }
+    var geo = mb.build();
+    if (geo) { this.mesh = new THREE.Mesh(geo, MATS); this.mesh.matrixAutoUpdate = false; this.group.add(this.mesh); }
+  },
+  addPerson: function (x, z, yaw, name, lines) {
+    var look = NPC_LOOKS[(this.occupants.length + Math.abs(x | 0)) % NPC_LOOKS.length];
+    var mesh = new THREE.Mesh(npcGeometry(look), matChar);
+    mesh.position.set(x, this.floorY, z);
+    mesh.rotation.y = yaw;
+    this.group.add(mesh);
+    this.occupants.push({ mesh: mesh, x: x, z: z, name: name, lines: lines });
+  },
+  enter: function (b) {
+    if (this.active) return;
+    var kind = this.kindFor(b);
+    this.build(kind, b.id);
+    this.back.x = player.pos.x; this.back.y = player.pos.y; this.back.z = player.pos.z;
+    this.back.yaw = player.yaw;
+    this.active = b;
+    this.group.visible = true;
+    setWorldVisible(false);
+    player.pos.set(this.door.x, this.floorY + 0.2, this.door.z + 5.5);
+    player.vel.set(0, 0, 0);
+    player.yaw = Math.PI;                    // face into the room, not at the door
+    player.pitch = -0.05;
+    if (scene.fog) { scene.fog.near = 30; scene.fog.far = 220; }
+    SFX.doorClose();
+    UI.toast('دخلت المبنى — اقترب من الباب واضغط تفاعل للخروج', 4000);
+  },
+  exit: function () {
+    if (!this.active) return;
+    this.active = null;
+    this.group.visible = false;
+    setWorldVisible(true);
+    player.pos.set(this.back.x, this.back.y, this.back.z);
+    player.vel.set(0, 0, 0);
+    player.yaw = this.back.yaw;
+    if (scene.fog) { scene.fog.near = QUAL.view * 0.30; scene.fog.far = QUAL.view; }
+    UW.on = false;
+    SFX.doorClose();
+    updateChunks(player.pos.x, player.pos.z, true);
+  },
+  nearDoor: function () {
+    return this.active && dist(player.pos.x, player.pos.z, this.door.x, this.door.z) < 4.2;
+  },
+  nearestPerson: function () {
+    for (var i = 0; i < this.occupants.length; i++) {
+      var o = this.occupants[i];
+      if (dist(o.x, o.z, player.pos.x, player.pos.z) < 4.5) return o;
+    }
+    return null;
+  },
+  // interior collision, used instead of the world maps while inside
+  supportAt: function (x, z, curY) {
+    var y = this.floorY;
+    for (var i = 0; i < this.solids.length; i++) {
+      var s2 = this.solids[i];
+      if (x < s2[0] || x > s2[3] || z < s2[2] || z > s2[5]) continue;
+      if (s2[4] <= curY + CFG.STEP && s2[4] > y) y = s2[4];
+    }
+    return y;
+  },
+  blockedAt: function (x, z, feetY, r) {
+    for (var i = 0; i < this.solids.length; i++) {
+      var s2 = this.solids[i];
+      if (x + r < s2[0] || x - r > s2[3] || z + r < s2[2] || z - r > s2[5]) continue;
+      if (s2[4] > feetY + CFG.STEP) return true;
+    }
+    return false;
+  },
+  pointSolid: function (x, y, z) {
+    var R = this.room;                       // the camera has to stay in the room
+    if (x < R.x0 || x > R.x1 || z < R.z0 || z > R.z1 || y > R.y1 || y < R.y0) return true;
+    for (var i = 0; i < this.solids.length; i++) {
+      var s2 = this.solids[i];
+      if (x >= s2[0] && x <= s2[3] && z >= s2[2] && z <= s2[5] && y >= s2[1] && y <= s2[4]) return true;
+    }
+    return false;
+  }
+};
+function setWorldVisible(v) {
+  if (chunkGroup) chunkGroup.visible = v;
+  if (lodGroup) lodGroup.visible = v;
+  if (landmarkMesh) landmarkMesh.visible = v;
+  if (vehGroup) vehGroup.visible = v;
+  if (NPCS.group) NPCS.group.visible = v;
+  if (WATERSYS.mesh) { WATERSYS.mesh.visible = v; WATERSYS.bubbles.visible = v; }
+  if (WEATHER.points) WEATHER.points.visible = v && WEATHER.on;
+  if (SIDE.group) SIDE.group.visible = v;
+  if (TIME.stars) TIME.stars.visible = v;
+  if (MISSION.marker) { MISSION.marker.visible = v && MISSION.active; MISSION.markerBeam.visible = v && MISSION.active; }
+}
+// which building is the player facing, if any?
+function buildingInFront() {
+  var fx = -Math.sin(player.yaw), fz = -Math.cos(player.yaw);
+  for (var d = 1.2; d <= 5.0; d += 0.7) {
+    var i = cellAt(player.pos.x + fx * d, player.pos.z + fz * d);
+    if (i < 0) continue;
+    if (W.bldH[i] > 6 && W.bldId[i] > 0) {
+      var b = BUILDINGS[W.bldId[i] - 1];
+      if (b && player.pos.y < 8) return b;
+    }
+  }
+  return null;
+}
 
 /* =========================================================================
    [09] PLAYER
@@ -1895,7 +2245,7 @@ var LM_BUILD = {
 var scene, camera, renderer, clock, chunkGroup, sun, hemi, sky;
 var QUAL = CFG.QUALITY.MEDIUM;
 var GS = {
-  quality: 'MEDIUM', sound: true, music: true, sens: 1.0, touchMode: 'auto',
+  quality: 'MEDIUM', sound: true, music: true, sens: 1.0, touchMode: 'auto', padSize: 'm', lefty: false,
   started: false, paused: false, dead: false,
   money: 120, score: 0, wanted: 0, hp: 100, stamina: 100, oxygen: 100,
   time: 6 * 3600, day: 1,
@@ -1916,48 +2266,106 @@ function charMat(hex) {
   var cv = document.createElement('canvas'); cv.width = cv.height = 8;
   var c = cv.getContext('2d');
   for (var y = 0; y < 8; y++) for (var x = 0; x < 8; x++)
-    px(c, x, y, 1, 1, shade(hex, 0.86 + ihash(x, y, hex & 255) * 0.28));
+    px(c, x, y, 1, 1, shade(hex, 0.9 + ihash(x, y, hex & 255) * 0.2));
   var m = new THREE.MeshLambertMaterial({ map: texFrom(cv, false) });
   charTexCache[hex] = m;
   return m;
 }
-function partMesh(w, h, d, hex, ox, oy, oz) {
-  var g = new THREE.BoxGeometry(w, h, d);
-  var m = new THREE.Mesh(g, charMat(hex));
-  m.position.set(ox || 0, oy || 0, oz || 0);
-  return m;
+
+/* ---- one anatomy shared by the hero and every pedestrian ----------------
+   Boxes are given in world space with a part tag. The hero splits them into
+   animated groups; pedestrians merge the lot into a single vertex coloured
+   mesh so a crowd still costs one draw call each.                          */
+function charBoxes(look) {
+  var SK = look.skin, SHIRT = look.shirt, PANTS = look.pants, HAIR = look.hair;
+  var JK = look.jacket || SHIRT, SHOE = look.shoe || 0x1b1d22;
+  var out = [];
+  function B(part, x0, y0, z0, x1, y1, z1, c) { out.push({ p: part, a: [x0, y0, z0, x1, y1, z1], c: c }); }
+
+  // --- legs: shoe, shin, thigh ---
+  B('legL', -0.50, 0.00, -0.32, -0.06, 0.24, 0.36, SHOE);
+  B('legL', -0.47, 0.24, -0.21, -0.09, 1.02, 0.21, PANTS);
+  B('legL', -0.49, 1.02, -0.23, -0.07, 1.84, 0.23, PANTS);
+  B('legR',  0.06, 0.00, -0.32,  0.50, 0.24, 0.36, SHOE);
+  B('legR',  0.09, 0.24, -0.21,  0.47, 1.02, 0.21, PANTS);
+  B('legR',  0.07, 1.02, -0.23,  0.49, 1.84, 0.23, PANTS);
+
+  // --- torso: belt, waist, chest, shoulders, front panel ---
+  B('torso', -0.50, 1.84, -0.25,  0.50, 2.02, 0.25, 0x2a2d34);
+  B('torso', -0.50, 2.02, -0.26,  0.50, 2.34, 0.26, SHIRT);
+  B('torso', -0.56, 2.34, -0.28,  0.56, 2.62, 0.28, JK);
+  B('torso', -0.62, 2.50, -0.29,  0.62, 2.70, 0.29, JK);
+  B('torso', -0.17, 2.04,  0.24,  0.17, 2.66, 0.31, SHIRT);
+  B('torso', -0.60, 2.62, -0.24,  0.60, 2.74, 0.24, HAIR);
+
+  // --- arms: upper, forearm, hand ---
+  B('armL', -0.92, 2.06, -0.20, -0.58, 2.62, 0.20, JK);
+  B('armL', -0.90, 1.56, -0.19, -0.60, 2.08, 0.19, SHIRT);
+  B('armL', -0.92, 1.28, -0.21, -0.58, 1.58, 0.21, SK);
+  B('armR',  0.58, 2.06, -0.20,  0.92, 2.62, 0.20, JK);
+  B('armR',  0.60, 1.56, -0.19,  0.90, 2.08, 0.19, SHIRT);
+  B('armR',  0.58, 1.28, -0.21,  0.92, 1.58, 0.21, SK);
+
+  // --- head ---
+  B('head', -0.15, 2.68, -0.15,  0.15, 2.88, 0.15, SK);                 // neck
+  B('head', -0.38, 2.88, -0.36,  0.38, 3.58, 0.36, SK);                 // skull
+  B('head', -0.22, 3.02,  0.36,  0.22, 3.14, 0.40, SK);                 // nose bridge
+  B('head', -0.07, 3.02,  0.36,  0.07, 3.16, 0.44, SK);                 // nose
+  B('head', -0.28, 3.20,  0.35, -0.10, 3.32, 0.39, 0x14161a);           // eyes
+  B('head',  0.10, 3.20,  0.35,  0.28, 3.32, 0.39, 0x14161a);
+  B('head', -0.25, 3.23,  0.38, -0.16, 3.30, 0.41, 0xf4f6f8);           // catch light
+  B('head',  0.16, 3.23,  0.38,  0.25, 3.30, 0.41, 0xf4f6f8);
+  B('head', -0.30, 3.36,  0.34, -0.08, 3.41, 0.38, HAIR);               // brows
+  B('head',  0.08, 3.36,  0.34,  0.30, 3.41, 0.38, HAIR);
+  B('head', -0.13, 2.96,  0.35,  0.13, 3.01, 0.39, 0x7a4038);           // mouth
+
+  // --- hair / headwear ---
+  if (look.hat) {
+    B('head', -0.42, 3.54, -0.40, 0.42, 3.74, 0.40, look.hat);
+    B('head', -0.38, 3.48,  0.36, 0.38, 3.58, 0.62, look.hat);          // peak
+    B('head', -0.40, 3.40, -0.40, 0.40, 3.56, -0.34, HAIR);
+  } else if (look.longHair) {
+    B('head', -0.42, 3.52, -0.40, 0.42, 3.70, 0.40, HAIR);
+    B('head', -0.42, 3.00, -0.42, 0.42, 3.56, -0.32, HAIR);             // back
+    B('head', -0.44, 3.10, -0.36, -0.36, 3.56, 0.34, HAIR);             // sides
+    B('head',  0.36, 3.10, -0.36,  0.44, 3.56, 0.34, HAIR);
+    B('head', -0.40, 3.42,  0.32, 0.40, 3.56, 0.40, HAIR);              // fringe
+  } else {
+    B('head', -0.40, 3.52, -0.38, 0.40, 3.68, 0.38, HAIR);
+    B('head', -0.40, 3.30, -0.40, 0.40, 3.56, -0.32, HAIR);
+    B('head', -0.40, 3.44,  0.32, 0.40, 3.56, 0.39, HAIR);
+  }
+  if (look.bag) {                                                        // backpack
+    B('torso', -0.40, 2.02, -0.56, 0.40, 2.62, -0.26, look.bag);
+    B('torso', -0.46, 2.20, -0.30, -0.36, 2.66, 0.28, look.bag);
+    B('torso',  0.36, 2.20, -0.30,  0.46, 2.66, 0.28, look.bag);
+  }
+  return out;
 }
-// a voxel person: head / torso / two arms / two legs, pivoted for animation
-function makeCharacter(cols) {
-  var g = new THREE.Group();
-  var torso = partMesh(1.1, 1.3, 0.62, cols.shirt, 0, 1.65, 0);
-  torso.add(partMesh(1.14, 0.18, 0.66, cols.hair, 0, 0.56, 0));          // collar
-  torso.add(partMesh(0.3, 1.28, 0.05, 0xffffff, 0, 0, 0.32));            // zip line
-  var head = partMesh(0.86, 0.86, 0.86, cols.skin, 0, 2.72, 0);
-  head.add(partMesh(0.16, 0.16, 0.06, 0x1a1a1e, -0.19, 0.08, 0.45));     // eyes
-  head.add(partMesh(0.16, 0.16, 0.06, 0x1a1a1e, 0.19, 0.08, 0.45));
-  head.add(partMesh(0.1, 0.1, 0.05, 0xffffff, -0.16, 0.1, 0.46));        // catch light
-  head.add(partMesh(0.1, 0.1, 0.05, 0xffffff, 0.22, 0.1, 0.46));
-  head.add(partMesh(0.3, 0.07, 0.05, 0x6b3a34, 0, -0.24, 0.45));         // mouth
-  head.add(partMesh(0.4, 0.62, 0.06, cols.hair, 0, 0.08, -0.45));        // back hair
-  var neck = partMesh(0.44, 0.24, 0.44, cols.skin, 0, 2.32, 0);
-  var hair = partMesh(0.92, 0.3, 0.92, cols.hair, 0, 3.12, 0);
-  hair.add(partMesh(0.92, 0.2, 0.16, cols.hair, 0, -0.24, 0.4));         // fringe
-  var armL = new THREE.Group(), armR = new THREE.Group();
-  armL.position.set(-0.76, 2.22, 0); armR.position.set(0.76, 2.22, 0);
-  armL.add(partMesh(0.36, 1.2, 0.42, cols.shirt, 0, -0.6, 0));
-  armR.add(partMesh(0.36, 1.2, 0.42, cols.shirt, 0, -0.6, 0));
-  armL.add(partMesh(0.4, 0.34, 0.46, cols.skin, 0, -1.34, 0));           // hands
-  armR.add(partMesh(0.4, 0.34, 0.46, cols.skin, 0, -1.34, 0));
-  var legL = new THREE.Group(), legR = new THREE.Group();
-  legL.position.set(-0.3, 1.0, 0); legR.position.set(0.3, 1.0, 0);
-  legL.add(partMesh(0.44, 1.05, 0.46, cols.pants, 0, -0.52, 0));
-  legR.add(partMesh(0.44, 1.05, 0.46, cols.pants, 0, -0.52, 0));
-  legL.add(partMesh(0.46, 0.22, 0.6, cols.shoe, 0, -1.12, 0.06));
-  legR.add(partMesh(0.46, 0.22, 0.6, cols.shoe, 0, -1.12, 0.06));
-  g.add(torso); g.add(neck); g.add(head); g.add(hair); g.add(armL); g.add(armR); g.add(legL); g.add(legR);
-  return { group: g, parts: { torso: torso, head: head, hair: hair, neck: neck,
-                              armL: armL, armR: armR, legL: legL, legR: legR } };
+
+var CHAR_PIVOTS = {
+  legL:  [-0.28, 1.84, 0], legR: [0.28, 1.84, 0],
+  armL:  [-0.75, 2.62, 0], armR: [0.75, 2.62, 0],
+  torso: [0, 1.84, 0],     head: [0, 2.88, 0]
+};
+function makeCharacter(look) {
+  var g = new THREE.Group(), parts = {}, k;
+  for (k in CHAR_PIVOTS) {
+    var pv = CHAR_PIVOTS[k];
+    var grp = new THREE.Group();
+    grp.position.set(pv[0], pv[1], pv[2]);
+    parts[k] = grp;
+    g.add(grp);
+  }
+  var boxes = charBoxes(look);
+  for (var i = 0; i < boxes.length; i++) {
+    var b = boxes[i], a = b.a, pv2 = CHAR_PIVOTS[b.p] || [0, 0, 0];
+    var w = a[3] - a[0], h = a[4] - a[1], d = a[5] - a[2];
+    var m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), charMat(b.c));
+    m.position.set((a[0] + a[3]) / 2 - pv2[0], (a[1] + a[4]) / 2 - pv2[1], (a[2] + a[5]) / 2 - pv2[2]);
+    (parts[b.p] || g).add(m);
+  }
+  return { group: g, parts: parts };
 }
 
 // ---- world queries -------------------------------------------------------
@@ -1967,6 +2375,7 @@ function cellAt(x, z) {
   return idx(cx, cz);
 }
 function supportY(x, z, curY) {
+  if (INTERIOR.active) return INTERIOR.supportAt(x, z, curY);
   var i = cellAt(x, z);
   if (i < 0) return 0;
   var y = W.water[i] ? ((W.park[i] === 3) ? -3.4 : CFG.BED_Y) : W.terr[i];
@@ -1978,7 +2387,7 @@ function supportY(x, z, curY) {
 }
 function groundUnder(x, z, curY) {
   // highest support in the player's footprint
-  var r = CFG.P_RAD * 0.8, m = -99;
+  var r = CFG.P_RAD * 0.8, m = -1e9;
   m = Math.max(m, supportY(x - r, z - r, curY)); m = Math.max(m, supportY(x + r, z - r, curY));
   m = Math.max(m, supportY(x - r, z + r, curY)); m = Math.max(m, supportY(x + r, z + r, curY));
   m = Math.max(m, supportY(x, z, curY));
@@ -1986,6 +2395,7 @@ function groundUnder(x, z, curY) {
 }
 function blockedAt(x, z, feetY, rad) {
   var r = rad || CFG.P_RAD;
+  if (INTERIOR.active) return INTERIOR.blockedAt(x, z, feetY, r);
   var cx0 = w2c(x - r), cx1 = w2c(x + r), cz0 = w2c(z - r), cz1 = w2c(z + r);
   for (var cz = cz0; cz <= cz1; cz++) for (var cx = cx0; cx <= cx1; cx++) {
     if (!inGrid(cx, cz)) return true;
@@ -1997,6 +2407,7 @@ function blockedAt(x, z, feetY, rad) {
   return false;
 }
 function waterAt(x, z) {
+  if (INTERIOR.active) return false;
   var i = cellAt(x, z);
   return i >= 0 && W.water[i] === 1 && !W.deck[i];
 }
@@ -2011,7 +2422,8 @@ function moveWithCollision(obj, dx, dz, feetY, rad) {
 
 // ---- player logic --------------------------------------------------------
 function initPlayer() {
-  var ch = makeCharacter({ skin: 0xd9a577, shirt: 0x2f6fbf, pants: 0x2b3550, shoe: 0x22252c, hair: 0x2a1e18 });
+  var ch = makeCharacter({ skin: 0xd9a577, shirt: 0xe8eef6, jacket: 0x2f6fbf, pants: 0x2b3550,
+                           shoe: 0x22252c, hair: 0x2a1e18 });
   player.group = ch.group; player.parts = ch.parts;
   scene.add(player.group);
   player.pos = new THREE.Vector3(0, 0, 0);
@@ -2132,7 +2544,8 @@ function animatePlayer(dt) {
   var p = player.parts, g = player.group;
   g.position.set(player.pos.x, player.pos.y, player.pos.z);
   if (player.vehAnim > 0) {                 // enter / exit vehicle
-    player.vehAnim = Math.max(0, player.vehAnim - dt);
+    player.vehAnim = player.vehAnim - dt;
+    if (player.vehAnim < 1e-4) player.vehAnim = 0;
     var k = clamp(player.vehAnim / 0.45, 0, 1), bend = Math.sin((1 - k) * Math.PI);
     g.rotation.x = 0;
     p.torso.rotation.x = 0.5 * bend;
@@ -2176,7 +2589,6 @@ function animatePlayer(dt) {
     p.torso.rotation.x = 0.02 + sw * 0.2;
   }
   p.head.rotation.x = clamp(player.pitch * 0.4, -0.5, 0.5);
-  p.hair.rotation.x = p.head.rotation.x;
 }
 
 function damagePlayer(v, why) {
@@ -2197,6 +2609,7 @@ function knockOut(why) {
   }, 1800);
 }
 function respawnSafe() {
+  if (INTERIOR.active) INTERIOR.exit();
   if (player.vehicle) exitVehicle(true);
   player.pos.copy(player.safe);
   player.pos.y = groundUnder(player.pos.x, player.pos.z, player.pos.y + 6) + 0.4;
@@ -2206,6 +2619,7 @@ function respawnSafe() {
 
 // SAFE POSITION SYSTEM + world boundary + NaN guard
 function safetyCheck(dt) {
+  if (INTERIOR.active) return;
   player.safeT += dt;
   var p = player.pos;
   if (!isFinite3(p) || !isFinite3(player.vel)) {
@@ -2223,6 +2637,7 @@ function safetyCheck(dt) {
   }
 }
 function boundaryCheck() {
+  if (INTERIOR.active) return;
   var p = player.vehicle ? player.vehicle.pos : player.pos;
   var m = Math.max(Math.abs(p.x), Math.abs(p.z));
   if (m > CFG.BOUND_HARD) {
@@ -2239,7 +2654,7 @@ function boundaryCheck() {
    ========================================================================= */
 var CAM = { mode: 0, dist: 11.5, curDist: 11.5, height: 3.2, shake: 0, pos: null, look: null };
 function initCamera() {
-  camera = new THREE.PerspectiveCamera(64, window.innerWidth / window.innerHeight, 0.25, QUAL.fog + 320);
+  camera = new THREE.PerspectiveCamera(64, window.innerWidth / window.innerHeight, 0.3, QUAL.view + 600);
   CAM.pos = new THREE.Vector3(); CAM.look = new THREE.Vector3();
   camera.position.set(0, 20, 20);
 }
@@ -2248,6 +2663,7 @@ function camOccluded(fromX, fromY, fromZ, toX, toY, toZ) {
   for (var s = 1; s <= steps; s++) {
     var t = s / steps;
     var x = lerp(fromX, toX, t), y = lerp(fromY, toY, t), z = lerp(fromZ, toZ, t);
+    if (INTERIOR.active) { if (INTERIOR.pointSolid(x, y, z)) return t; continue; }
     var i = cellAt(x, z);
     if (i < 0) return t;
     if (W.bldH[i] > y - 0.4) return t;
@@ -2270,15 +2686,17 @@ function updateCamera(dt) {
       -Math.cos(player.yaw) * Math.cos(player.pitch));
     camera.lookAt(camera.position.x + dir.x, camera.position.y + dir.y, camera.position.z + dir.z);
   } else {
-    var dist = player.vehicle ? 15.5 : CAM.dist;
+    var dist = player.vehicle ? 15.5 : (INTERIOR.active ? Math.min(CAM.dist, 7.5) : CAM.dist);
     var cp = Math.cos(player.pitch), sp = Math.sin(player.pitch);
     var dx = Math.sin(player.yaw) * cp, dz = Math.cos(player.yaw) * cp;
     var wantX = hx + dx * dist, wantY = hy - sp * dist + CAM.height, wantZ = hz + dz * dist;
     var t = camOccluded(hx, hy + 0.5, hz, wantX, wantY, wantZ);
-    var d2 = Math.max(4.4, dist * clamp(t, 0.22, 1));   // never end up inside the character
+    var d2 = Math.max(INTERIOR.active ? 1.9 : 4.4, dist * clamp(t, INTERIOR.active ? 0.1 : 0.22, 1) * (INTERIOR.active ? 0.82 : 1));
     CAM.curDist += (d2 - CAM.curDist) * Math.min(1, (d2 < CAM.curDist ? 24 : 6) * dt);
     var fx2 = hx + dx * CAM.curDist, fy2 = hy - sp * CAM.curDist + CAM.height * (CAM.curDist / dist), fz2 = hz + dz * CAM.curDist;
-    CAM.pos.set(fx2, Math.max(fy2, groundUnder(fx2, fz2, fy2) + 1.2), fz2);
+    // outdoors the camera must not sink into the ground; indoors the room test
+    // already keeps it honest, and this clamp would shove it through the ceiling
+    CAM.pos.set(fx2, INTERIOR.active ? fy2 : Math.max(fy2, groundUnder(fx2, fz2, fy2) + 1.2), fz2);
     camera.position.lerp(CAM.pos, Math.min(1, 14 * dt));
     CAM.look.set(hx, hy + 0.6, hz);
     camera.lookAt(CAM.look);
@@ -2297,6 +2715,7 @@ function updateCamera(dt) {
 // tint the world when the camera itself is below the surface
 var UW = { on: false };
 function applyUnderwaterView() {
+  if (INTERIOR.active) return;
   var under = camera.position.y < CFG.WATER_Y && waterAt(camera.position.x, camera.position.z);
   if (under === UW.on) return;
   UW.on = under;
@@ -2306,7 +2725,7 @@ function applyUnderwaterView() {
     scene.fog.color.setHex(0x1d5f86);
     scene.background = new THREE.Color(0x14496a);
   } else {
-    scene.fog.near = QUAL.fog * 0.25; scene.fog.far = QUAL.fog;
+    scene.fog.near = QUAL.view * 0.30; scene.fog.far = QUAL.view;
   }
 }
 
@@ -2866,55 +3285,34 @@ function crashVehicle(v, force) {
    [13] NPC SYSTEM — pooled voxel pedestrians on sidewalks and paths
    ========================================================================= */
 var NPC_LOOKS = [
-  { skin: 0xd9a577, shirt: 0xcf4b4b, pants: 0x33384a, hair: 0x211a15 },
-  { skin: 0x8d5a3b, shirt: 0x2f8f6f, pants: 0x2b2f3a, hair: 0x120e0b, bag: 0x3b3f4a },
-  { skin: 0xf0c9a0, shirt: 0x3f5fa8, pants: 0x4a4438, hair: 0x6b4a2c, hat: 0x27313f },
-  { skin: 0xc98d63, shirt: 0xe0b23c, pants: 0x2f3a48, hair: 0x2a2320 },
-  { skin: 0xe8bb91, shirt: 0x8e4bbf, pants: 0x22262e, hair: 0x4a3020, bag: 0x8a3d3d },
-  { skin: 0x6d4128, shirt: 0xdedede, pants: 0x39424e, hair: 0x0f0d0c, hat: 0xb03a3a },
-  { skin: 0xf2d3b0, shirt: 0x2b6f8e, pants: 0x5a4632, hair: 0x8a6a3a },
-  { skin: 0xa06840, shirt: 0x4a4f5a, pants: 0x24303f, hair: 0x171310, bag: 0x2f6f4f },
-  { skin: 0xdcae86, shirt: 0xd96a2b, pants: 0x333a46, hair: 0x3a2a20, hat: 0x2f3a48 },
-  { skin: 0x7b4a2e, shirt: 0x6b4fa8, pants: 0x2a2f38, hair: 0x0d0b0a }
+  { skin: 0xd9a577, shirt: 0xf0f2f5, jacket: 0x8e2f2f, pants: 0x33384a, hair: 0x211a15 },
+  { skin: 0x8d5a3b, shirt: 0xdfe6ec, jacket: 0x25604a, pants: 0x2b2f3a, hair: 0x120e0b, bag: 0x3b3f4a },
+  { skin: 0xf0c9a0, shirt: 0xe6ecf2, jacket: 0x2f4a80, pants: 0x4a4438, hair: 0x6b4a2c, hat: 0x27313f },
+  { skin: 0xc98d63, shirt: 0xf3e2b8, jacket: 0xb4862a, pants: 0x2f3a48, hair: 0x2a2320, longHair: 1 },
+  { skin: 0xe8bb91, shirt: 0xefe6f4, jacket: 0x5f3585, pants: 0x22262e, hair: 0x4a3020, bag: 0x8a3d3d },
+  { skin: 0x6d4128, shirt: 0xdedede, jacket: 0x3d434e, pants: 0x39424e, hair: 0x0f0d0c, hat: 0x8f2f2f },
+  { skin: 0xf2d3b0, shirt: 0xdff0f6, jacket: 0x1f5a72, pants: 0x5a4632, hair: 0x8a6a3a, longHair: 1 },
+  { skin: 0xa06840, shirt: 0xe9edf1, jacket: 0x33404f, pants: 0x24303f, hair: 0x171310, bag: 0x2f6f4f },
+  { skin: 0xdcae86, shirt: 0xfae3cf, jacket: 0xa8501f, pants: 0x333a46, hair: 0x3a2a20, hat: 0x2f3a48 },
+  { skin: 0x7b4a2e, shirt: 0xe4e0f0, jacket: 0x453a7a, pants: 0x2a2f38, hair: 0x0d0b0a },
+  { skin: 0xefc9a4, shirt: 0xf7f7f7, jacket: 0x6f7480, pants: 0x1f242c, hair: 0x5a4130, longHair: 1 },
+  { skin: 0x95602f, shirt: 0xd8ecdf, jacket: 0x2c6f5a, pants: 0x3a3f4a, hair: 0x140f0c, bag: 0x8a6a2a }
 ];
 var npcGeoCache = {};
 function npcGeometry(look) {
-  var key = look.skin + '_' + look.shirt + '_' + look.pants + '_' + (look.hat || 0) + '_' + (look.bag || 0);
+  var key = look.skin + '_' + look.shirt + '_' + look.pants + '_' + (look.hat || 0) +
+            '_' + (look.bag || 0) + '_' + (look.longHair ? 1 : 0) + '_' + (look.jacket || 0);
   if (npcGeoCache[key]) return npcGeoCache[key];
-  var b = new VB(), dark = 0x1a1a1e;
-  b.box(-0.55, 1.05, -0.31, 0.55, 2.3, 0.31, look.shirt);        // torso
-  b.box(-0.57, 2.12, -0.33, 0.57, 2.32, 0.33, look.hair);        // collar
-  b.box(-0.22, 2.28, -0.2, 0.22, 2.44, 0.2, look.skin);          // neck
-  b.box(-0.43, 2.44, -0.43, 0.43, 3.22, 0.43, look.skin);        // head
-  b.box(-0.45, 3.1, -0.45, 0.45, 3.34, 0.45, look.hair);         // hair
-  b.box(-0.45, 2.9, 0.3, 0.45, 3.14, 0.47, look.hair);           // fringe
-  b.box(-0.2, 3.06, -0.47, 0.2, 3.2, -0.42, look.hair);
-  b.box(-0.26, 2.78, 0.43, -0.1, 2.94, 0.47, dark);              // eyes
-  b.box(0.1, 2.78, 0.43, 0.26, 2.94, 0.47, dark);
-  b.box(-0.23, 2.81, 0.45, -0.15, 2.9, 0.48, 0xf2f2f2);
-  b.box(0.15, 2.81, 0.45, 0.23, 2.9, 0.48, 0xf2f2f2);
-  b.box(-0.14, 2.56, 0.43, 0.14, 2.63, 0.46, 0x6b3a34);          // mouth
-  b.box(-0.94, 1.1, -0.21, -0.58, 2.2, 0.21, look.shirt);        // arms
-  b.box(0.58, 1.1, -0.21, 0.94, 2.2, 0.21, look.shirt);
-  b.box(-0.96, 0.78, -0.23, -0.56, 1.12, 0.23, look.skin);       // hands
-  b.box(0.56, 0.78, -0.23, 0.96, 1.12, 0.23, look.skin);
-  b.box(-0.52, 0.16, -0.23, -0.08, 1.1, 0.23, look.pants);       // legs
-  b.box(0.08, 0.16, -0.23, 0.52, 1.1, 0.23, look.pants);
-  b.box(-0.55, 0, -0.26, -0.05, 0.2, 0.3, dark);                 // shoes
-  b.box(0.05, 0, -0.26, 0.55, 0.2, 0.3, dark);
-  if (look.hat) {
-    b.box(-0.47, 3.3, -0.47, 0.47, 3.5, 0.47, look.hat);
-    b.box(-0.44, 3.24, 0.3, 0.44, 3.34, 0.62, look.hat);         // peak
-  }
-  if (look.bag) {
-    b.box(-0.42, 1.3, -0.62, 0.42, 2.25, -0.3, look.bag);
-    b.box(-0.5, 1.6, -0.34, -0.4, 2.3, 0.3, look.bag);           // straps
-    b.box(0.4, 1.6, -0.34, 0.5, 2.3, 0.3, look.bag);
+  var b = new VB(), boxes = charBoxes(look);
+  for (var i = 0; i < boxes.length; i++) {
+    var a = boxes[i].a;
+    b.box(a[0], a[1], a[2], a[3], a[4], a[5], boxes[i].c);
   }
   var g = b.build();
   npcGeoCache[key] = g;
   return g;
 }
+
 var NPCS = {
   list: [], group: null,
   init: function () {
@@ -3194,7 +3592,7 @@ var NPCS = {
    ========================================================================= */
 var POLICE = {
   cars: [], officers: [], cool: 0, bustT: 0, sirenOn: false, blockT: 0,
-  station: { cx: 130, cz: 198 },
+  station: { cx: 130 * SC, cz: 198 * SC },
   init: function () {
     for (var i = 0; i < 4; i++) {
       var v = makeVehicle(5, 0x1e3f8f);
@@ -3318,7 +3716,7 @@ var POLICE = {
     if (len < 0.5) { vx = -Math.sin(player.yaw); vz = -Math.cos(player.yaw); len = 1; }
     vx /= len; vz /= len;
     var best = null;
-    for (var d = 70; d <= 130; d += 8) {
+    for (var d = 60; d <= 190; d += 8) {
       var cx = w2c(player.pos.x + vx * d), cz = w2c(player.pos.z + vz * d);
       if (isDrivable(cx, cz)) { best = { x: cx, z: cz }; break; }
     }
@@ -3340,6 +3738,7 @@ var POLICE = {
   },
   bust: function () {
     this.bustT = 0;
+    if (INTERIOR.active) INTERIOR.exit();
     UI.banner('تم إيقافك من قبل الشرطة', 'تمت إعادتك إلى مركز الشرطة');
     GS.money = Math.max(0, GS.money - 100);
     if (player.vehicle) exitVehicle(true);
@@ -3426,7 +3825,7 @@ function updateChaseCar(v, dt) {
 var WATERSYS = {
   mesh: null, t: 0, bubbles: null, bpos: null, bdata: [], bIdx: 0,
   init: function () {
-    var g = new THREE.PlaneGeometry(1400, 1400, 1, 1);
+    var g = new THREE.PlaneGeometry(3400, 3400, 1, 1);
     g.rotateX(-Math.PI / 2);
     this.mesh = new THREE.Mesh(g, matWater);
     this.mesh.renderOrder = 2;
@@ -3444,7 +3843,7 @@ var WATERSYS = {
   },
   update: function (dt) {
     this.t += dt;
-    var snap = 1400 / 48;
+    var snap = 3400 / 110;
     this.mesh.position.set(Math.round(player.pos.x / snap) * snap, CFG.WATER_Y + Math.sin(this.t * 0.7) * 0.12, Math.round(player.pos.z / snap) * snap);
     matWater.map.offset.x = Math.sin(this.t * 0.06) * 0.4 + this.t * 0.008;
     matWater.map.offset.y = Math.cos(this.t * 0.05) * 0.4;
@@ -3532,8 +3931,8 @@ var TIME = {
     if (!UW.on) scene.background = this.cSky;
     if (scene.fog && !UW.on) {
       scene.fog.color.copy(this.cFog);
-      scene.fog.near = QUAL.fog * (wet > 0 ? 0.12 : 0.24);
-      scene.fog.far = QUAL.fog * (1 - wet * 0.35);
+      scene.fog.near = QUAL.view * (wet > 0 ? 0.10 : 0.30);
+      scene.fog.far = QUAL.view * (1 - wet * 0.4);
     }
     // sun / moon direction
     var ang = (t - 0.25) * Math.PI * 2;
@@ -3621,25 +4020,48 @@ var WEATHER = {
    [17] AUDIO SYSTEM — Web Audio API only, everything synthesised
    ========================================================================= */
 var AUDIO = {
-  ctx: null, master: null, sfxG: null, musG: null, ambG: null, ready: false,
-  noiseBuf: null, engine: null, siren: null, rain: null, amb: null,
-  track: null, nextNote: 0, step: 0,
+  ctx: null, master: null, sfxG: null, musG: null, ambG: null, revG: null, reverb: null,
+  ready: false, noiseBuf: null, engine: null, siren: null, rain: null,
+  amb: null, wind: null, track: null, nextNote: 0, step: 0, evtT: 0,
   init: function () {
     if (this.ready) return;
     try {
       var AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return;
-      this.ctx = new AC();
-      this.master = this.ctx.createGain(); this.master.gain.value = GS.sound ? 0.5 : 0;
-      this.master.connect(this.ctx.destination);
-      this.sfxG = this.ctx.createGain(); this.sfxG.gain.value = 0.9; this.sfxG.connect(this.master);
-      this.musG = this.ctx.createGain(); this.musG.gain.value = GS.music ? 0.28 : 0; this.musG.connect(this.master);
-      this.ambG = this.ctx.createGain(); this.ambG.gain.value = 0.35; this.ambG.connect(this.master);
-      // white noise buffer, reused by every noise-based sound
-      var len = this.ctx.sampleRate * 2;
-      this.noiseBuf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
-      var d = this.noiseBuf.getChannelData(0);
-      for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      var c = this.ctx = new AC();
+      this.master = c.createGain(); this.master.gain.value = GS.sound ? 0.5 : 0;
+      // a soft limiter keeps the mix from clipping when a lot happens at once
+      var comp = c.createDynamicsCompressor();
+      comp.threshold.value = -14; comp.knee.value = 24; comp.ratio.value = 6;
+      comp.attack.value = 0.005; comp.release.value = 0.16;
+      this.master.connect(comp); comp.connect(c.destination);
+
+      // generated impulse response: a small room with a short tail
+      this.reverb = c.createConvolver();
+      var len = Math.floor(c.sampleRate * 1.6), ir = c.createBuffer(2, len, c.sampleRate);
+      for (var ch = 0; ch < 2; ch++) {
+        var d = ir.getChannelData(ch);
+        for (var i = 0; i < len; i++) {
+          var t = i / len;
+          d[i] = (Math.random() * 2 - 1) * Math.pow(1 - t, 3.2) * (i < 400 ? i / 400 : 1);
+        }
+      }
+      this.reverb.buffer = ir;
+      this.revG = c.createGain(); this.revG.gain.value = 0.28;
+      this.reverb.connect(this.revG); this.revG.connect(this.master);
+
+      this.sfxG = c.createGain(); this.sfxG.gain.value = 0.85; this.sfxG.connect(this.master);
+      this.musG = c.createGain(); this.musG.gain.value = GS.music ? 0.3 : 0; this.musG.connect(this.master);
+      this.ambG = c.createGain(); this.ambG.gain.value = 0.32; this.ambG.connect(this.master);
+      var sfxSend = c.createGain(); sfxSend.gain.value = 0.16;
+      this.sfxG.connect(sfxSend); sfxSend.connect(this.reverb);
+      var musSend = c.createGain(); musSend.gain.value = 0.3;
+      this.musG.connect(musSend); musSend.connect(this.reverb);
+
+      var n = c.sampleRate * 2;
+      this.noiseBuf = c.createBuffer(1, n, c.sampleRate);
+      var nd = this.noiseBuf.getChannelData(0);
+      for (var j = 0; j < n; j++) nd[j] = Math.random() * 2 - 1;
       this.ready = true;
       this.startAmbience();
       this.setTrack(TIME.isNight() ? 'night' : 'explore');
@@ -3649,12 +4071,12 @@ var AUDIO = {
   setVolume: function () {
     if (!this.ready) return;
     this.master.gain.value = GS.sound ? 0.5 : 0;
-    this.musG.gain.value = GS.music && GS.sound ? 0.28 : 0;
+    this.musG.gain.value = GS.music && GS.sound ? 0.3 : 0;
   },
   noiseSource: function (loop) {
-    var s = this.ctx.createBufferSource();
-    s.buffer = this.noiseBuf; s.loop = !!loop;
-    return s;
+    var s2 = this.ctx.createBufferSource();
+    s2.buffer = this.noiseBuf; s2.loop = !!loop;
+    return s2;
   },
   blip: function (freq, dur, type, gain, dest, slideTo) {
     if (!this.ready || !GS.sound) return;
@@ -3668,82 +4090,137 @@ var AUDIO = {
     o.connect(g); g.connect(dest || this.sfxG);
     o.start(t); o.stop(t + dur + 0.02);
   },
-  noiseBurst: function (dur, freq, q, gain) {
+  noiseBurst: function (dur, freq, q, gain, type) {
     if (!this.ready || !GS.sound) return;
     var t = this.ctx.currentTime;
-    var s = this.noiseSource(false), f = this.ctx.createBiquadFilter(), g = this.ctx.createGain();
-    f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = q || 1;
+    var s2 = this.noiseSource(false), f = this.ctx.createBiquadFilter(), g = this.ctx.createGain();
+    f.type = type || 'bandpass'; f.frequency.value = freq; f.Q.value = q || 1;
     g.gain.setValueAtTime(gain || 0.25, t);
     g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    s.connect(f); f.connect(g); g.connect(this.sfxG);
-    s.start(t); s.stop(t + dur + 0.02);
+    s2.connect(f); f.connect(g); g.connect(this.sfxG);
+    s2.start(t); s2.stop(t + dur + 0.02);
   },
+
+  /* ---- layered ambience: city hum, wind up high, birds, gulls, crickets ---- */
   startAmbience: function () {
     if (!this.ready) return;
-    var s = this.noiseSource(true), f = this.ctx.createBiquadFilter(), g = this.ctx.createGain();
-    f.type = 'lowpass'; f.frequency.value = 420; f.Q.value = 0.6;
-    g.gain.value = 0.1;
-    s.connect(f); f.connect(g); g.connect(this.ambG);
-    s.start();
-    this.amb = { src: s, gain: g, filter: f };
+    var c = this.ctx;
+    var s2 = this.noiseSource(true), f = c.createBiquadFilter(), g = c.createGain();
+    f.type = 'lowpass'; f.frequency.value = 420; f.Q.value = 0.7;
+    g.gain.value = 0.08;
+    s2.connect(f); f.connect(g); g.connect(this.ambG);
+    s2.start();
+    this.amb = { src: s2, gain: g, filter: f };
+
+    var w = this.noiseSource(true), wf = c.createBiquadFilter(), wg = c.createGain();
+    wf.type = 'bandpass'; wf.frequency.value = 700; wf.Q.value = 0.9;
+    wg.gain.value = 0.0001;
+    w.connect(wf); wf.connect(wg); wg.connect(this.ambG);
+    w.start();
+    this.wind = { src: w, gain: wg, filter: wf };
   },
-  ambienceLevel: function (v) { if (this.amb) this.amb.gain.gain.value = 0.03 + v * 0.13; },
+  ambienceLevel: function (v) {
+    if (!this.amb) return;
+    var inside = INTERIOR.active ? 1 : 0;
+    this.amb.gain.gain.setTargetAtTime(inside ? 0.02 : (0.03 + v * 0.14), this.ctx.currentTime, 0.4);
+    this.amb.filter.frequency.setTargetAtTime(inside ? 180 : 420, this.ctx.currentTime, 0.4);
+    if (this.wind) {
+      var h = clamp((player.pos.y - 40) / 160, 0, 1) * (inside ? 0 : 1);
+      this.wind.gain.gain.setTargetAtTime(0.0001 + h * 0.1, this.ctx.currentTime, 0.6);
+    }
+  },
+  // occasional one-shots that place you in the world
+  ambienceEvents: function (dt) {
+    if (!this.ready || !GS.sound || INTERIOR.active) return;
+    this.evtT -= dt;
+    if (this.evtT > 0) return;
+    this.evtT = 2.5 + rngFx.r() * 5;
+    var zone = zoneAt(player.pos.x, player.pos.z);
+    var night = TIME.isNight();
+    var r = rngFx.r();
+    if (zone === Z_PARK && !night && r < 0.6) {                    // birdsong
+      var base = 1700 + rngFx.r() * 900;
+      this.blip(base, 0.07, 'sine', 0.05, null, base * 1.5);
+      var self = this;
+      setTimeout(function () { self.blip(base * 1.3, 0.06, 'sine', 0.04, null, base * 0.8); }, 120);
+    } else if ((zone === Z_WATER || W.shore[Math.max(0, cellAt(player.pos.x, player.pos.z))]) && r < 0.5) {
+      this.blip(900, 0.22, 'sawtooth', 0.035, null, 620);          // gull
+    } else if (night && (zone === Z_PARK || zone === Z_NATURE) && r < 0.7) {
+      for (var k = 0; k < 3; k++) {                                 // crickets
+        var self2 = this;
+        setTimeout(function () { self2.noiseBurst(0.03, 4600, 18, 0.03); }, k * 90);
+      }
+    } else if (r < 0.35 && zone !== Z_NATURE) {
+      var d2 = 0.4 + rngFx.r() * 0.5;                               // a horn a few blocks away
+      this.blip(330 + rngFx.r() * 80, 0.3, 'square', 0.02 * d2, null);
+    }
+  },
+
+  /* ---- vehicle, siren, rain ---- */
   engineOn: function () {
     if (!this.ready || this.engine) return;
-    var t = this.ctx.currentTime;
-    var o = this.ctx.createOscillator(), o2 = this.ctx.createOscillator(), g = this.ctx.createGain(), f = this.ctx.createBiquadFilter();
+    var c = this.ctx, t = c.currentTime;
+    var o = c.createOscillator(), o2 = c.createOscillator(), o3 = c.createOscillator();
+    var g = c.createGain(), f = c.createBiquadFilter();
     o.type = 'sawtooth'; o.frequency.value = 55;
     o2.type = 'square'; o2.frequency.value = 27;
-    f.type = 'lowpass'; f.frequency.value = 700;
+    o3.type = 'sawtooth'; o3.frequency.value = 82;
+    f.type = 'lowpass'; f.frequency.value = 700; f.Q.value = 3;
     g.gain.value = 0.0001;
-    g.gain.exponentialRampToValueAtTime(0.10, t + 0.35);
-    o.connect(f); o2.connect(f); f.connect(g); g.connect(this.sfxG);
-    o.start(); o2.start();
-    this.engine = { o: o, o2: o2, g: g, f: f };
+    g.gain.exponentialRampToValueAtTime(0.1, t + 0.35);
+    o.connect(f); o2.connect(f); o3.connect(f); f.connect(g); g.connect(this.sfxG);
+    o.start(); o2.start(); o3.start();
+    this.engine = { o: o, o2: o2, o3: o3, g: g, f: f };
   },
   engineSpeed: function (norm, gas) {
     if (!this.engine) return;
-    var f = 46 + norm * 150;
-    this.engine.o.frequency.setTargetAtTime(f, this.ctx.currentTime, 0.12);
-    this.engine.o2.frequency.setTargetAtTime(f * 0.5, this.ctx.currentTime, 0.12);
-    this.engine.f.frequency.setTargetAtTime(500 + norm * 1500 + (gas ? 300 : 0), this.ctx.currentTime, 0.12);
-    this.engine.g.gain.setTargetAtTime(0.05 + norm * 0.1, this.ctx.currentTime, 0.15);
+    var t = this.ctx.currentTime, f = 46 + norm * 150;
+    this.engine.o.frequency.setTargetAtTime(f, t, 0.1);
+    this.engine.o2.frequency.setTargetAtTime(f * 0.5, t, 0.1);
+    this.engine.o3.frequency.setTargetAtTime(f * 1.51, t, 0.1);
+    this.engine.f.frequency.setTargetAtTime(420 + norm * 1700 + (gas ? 420 : 0), t, 0.1);
+    this.engine.g.gain.setTargetAtTime(0.05 + norm * 0.09, t, 0.15);
   },
   engineOff: function () {
     if (!this.engine) return;
     var e = this.engine, t = this.ctx.currentTime;
     e.g.gain.setTargetAtTime(0.0001, t, 0.12);
-    setTimeout(function () { try { e.o.stop(); e.o2.stop(); } catch (x) {} }, 400);
+    setTimeout(function () { try { e.o.stop(); e.o2.stop(); e.o3.stop(); } catch (x) {} }, 500);
     this.engine = null;
   },
   sirenOn: function () {
     if (!this.ready || this.siren) return;
-    var o = this.ctx.createOscillator(), g = this.ctx.createGain(), lfo = this.ctx.createOscillator(), lg = this.ctx.createGain();
+    var c = this.ctx;
+    var o = c.createOscillator(), o2 = c.createOscillator(), g = c.createGain();
+    var lfo = c.createOscillator(), lg = c.createGain();
     o.type = 'sawtooth'; o.frequency.value = 640;
-    lfo.type = 'sine'; lfo.frequency.value = 1.1; lg.gain.value = 250;
+    o2.type = 'square'; o2.frequency.value = 320;
+    lfo.type = 'sine'; lfo.frequency.value = 1.15; lg.gain.value = 260;
     lfo.connect(lg); lg.connect(o.frequency);
     g.gain.value = 0.0001;
-    g.gain.exponentialRampToValueAtTime(0.055, this.ctx.currentTime + 0.4);
-    o.connect(g); g.connect(this.sfxG);
-    o.start(); lfo.start();
-    this.siren = { o: o, g: g, lfo: lfo };
+    g.gain.exponentialRampToValueAtTime(0.05, c.currentTime + 0.4);
+    o.connect(g); o2.connect(g); g.connect(this.sfxG);
+    o.start(); o2.start(); lfo.start();
+    this.siren = { o: o, o2: o2, g: g, lfo: lfo };
   },
-  sirenLevel: function (v) { if (this.siren) this.siren.g.gain.setTargetAtTime(clamp(v, 0.0001, 0.09), this.ctx.currentTime, 0.3); },
+  sirenLevel: function (v) { if (this.siren) this.siren.g.gain.setTargetAtTime(clamp(v, 0.0001, 0.085), this.ctx.currentTime, 0.3); },
   sirenOff: function () {
     if (!this.siren) return;
-    var s = this.siren;
-    s.g.gain.setTargetAtTime(0.0001, this.ctx.currentTime, 0.2);
-    setTimeout(function () { try { s.o.stop(); s.lfo.stop(); } catch (x) {} }, 700);
+    var s2 = this.siren;
+    s2.g.gain.setTargetAtTime(0.0001, this.ctx.currentTime, 0.2);
+    setTimeout(function () { try { s2.o.stop(); s2.o2.stop(); s2.lfo.stop(); } catch (x) {} }, 800);
     this.siren = null;
   },
   rainOn: function () {
     if (!this.ready || this.rain) return;
-    var s = this.noiseSource(true), f = this.ctx.createBiquadFilter(), g = this.ctx.createGain();
-    f.type = 'highpass'; f.frequency.value = 1100;
+    var c = this.ctx;
+    var s2 = this.noiseSource(true), f = c.createBiquadFilter(), f2 = c.createBiquadFilter(), g = c.createGain();
+    f.type = 'highpass'; f.frequency.value = 900;
+    f2.type = 'lowpass'; f2.frequency.value = 6500;
     g.gain.value = 0.0001;
-    s.connect(f); f.connect(g); g.connect(this.ambG);
-    s.start();
-    this.rain = { s: s, g: g };
+    s2.connect(f); f.connect(f2); f2.connect(g); g.connect(this.ambG);
+    s2.start();
+    this.rain = { s: s2, g: g };
   },
   rainLevel: function (v) { if (this.rain) this.rain.g.gain.setTargetAtTime(v * 0.22, this.ctx.currentTime, 0.5); },
   rainOff: function () {
@@ -3753,84 +4230,159 @@ var AUDIO = {
     setTimeout(function () { try { r.s.stop(); } catch (x) {} }, 1200);
     this.rain = null;
   },
-  // ---- generated music ----
+
+  /* ---- music: chords, bass, drums and a lead, all synthesised ---- */
   tracks: {
-    explore: { bpm: 96, bass: [45, 45, 52, 52, 48, 48, 43, 43], lead: [69, 72, 76, 72, 74, 76, 79, 76], wave: 'triangle', gain: 0.16 },
-    chase:   { bpm: 148, bass: [40, 40, 43, 40, 45, 45, 38, 38], lead: [64, 67, 71, 67, 69, 72, 71, 67], wave: 'sawtooth', gain: 0.13 },
-    night:   { bpm: 74, bass: [41, 41, 46, 46, 39, 39, 44, 44], lead: [65, 68, 72, 75, 72, 68, 70, 65], wave: 'sine', gain: 0.18 }
+    explore: {
+      bpm: 94, swing: 0.16, lead: 'arp', drums: 'soft', padGain: 0.055, gain: 0.5,
+      prog: [[57, 60, 64, 67], [55, 59, 62, 65], [53, 57, 60, 64], [52, 55, 59, 62]]
+    },
+    night: {
+      bpm: 68, swing: 0.1, lead: 'bell', drums: 'none', padGain: 0.075, gain: 0.55,
+      prog: [[57, 60, 64, 67], [53, 57, 60, 64], [50, 53, 57, 60], [55, 58, 62, 65]]
+    },
+    chase: {
+      bpm: 154, swing: 0, lead: 'stab', drums: 'hard', padGain: 0.03, gain: 0.5,
+      prog: [[52, 55, 59], [50, 53, 57], [48, 51, 55], [53, 56, 60]]
+    }
   },
   setTrack: function (name) {
     if (name === null) name = TIME.isNight() ? 'night' : 'explore';
     if (this.track === name) return;
     this.track = name; this.step = 0;
-    if (this.ready) this.nextNote = this.ctx.currentTime + 0.1;
+    if (this.ready) this.nextNote = this.ctx.currentTime + 0.12;
   },
   midi: function (m) { return 440 * Math.pow(2, (m - 69) / 12); },
+  voice: function (freq, t, dur, type, gain, detune, dest) {
+    var c = this.ctx, o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    if (detune) o.detune.setValueAtTime(detune, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.0002, gain), t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(dest || this.musG);
+    o.start(t); o.stop(t + dur + 0.03);
+  },
+  drum: function (kind, t, gain) {
+    var c = this.ctx;
+    if (kind === 'kick') {
+      var o = c.createOscillator(), g = c.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(120, t);
+      o.frequency.exponentialRampToValueAtTime(42, t + 0.11);
+      g.gain.setValueAtTime(gain, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+      o.connect(g); g.connect(this.musG);
+      o.start(t); o.stop(t + 0.25);
+    } else {
+      var s2 = this.noiseSource(false), f = c.createBiquadFilter(), g2 = c.createGain();
+      if (kind === 'snare') { f.type = 'bandpass'; f.frequency.value = 1900; f.Q.value = 0.9; }
+      else { f.type = 'highpass'; f.frequency.value = 8200; }
+      g2.gain.setValueAtTime(gain, t);
+      g2.gain.exponentialRampToValueAtTime(0.0001, t + (kind === 'snare' ? 0.16 : 0.05));
+      s2.connect(f); f.connect(g2); g2.connect(this.musG);
+      s2.start(t); s2.stop(t + 0.2);
+    }
+  },
   updateMusic: function () {
     if (!this.ready || !GS.music || !GS.sound || !this.track) return;
     var tr = this.tracks[this.track];
     if (!tr) return;
-    var spb = 60 / tr.bpm / 2;
+    var stepDur = 60 / tr.bpm / 4;                 // sixteenths
     var now = this.ctx.currentTime;
-    while (this.nextNote < now + 0.25) {
-      var s = this.step % 8, t = this.nextNote;
-      // bass
-      this.noteAt(this.midi(tr.bass[s]) / 2, t, spb * 1.7, 'square', tr.gain * 0.55, this.musG);
-      // lead every other step
-      if (s % 2 === 0 || this.track === 'chase') {
-        this.noteAt(this.midi(tr.lead[s]), t, spb * 1.1, tr.wave, tr.gain * 0.4, this.musG);
+    while (this.nextNote < now + 0.3) {
+      var st = this.step % 16, bar = (this.step / 16 | 0) % tr.prog.length;
+      var chord = tr.prog[bar];
+      var swing = (st % 2 === 1) ? stepDur * tr.swing : 0;
+      var t = this.nextNote + swing, G = tr.gain;
+
+      if (st === 0) {                              // pad holds the chord for the bar
+        for (var i = 0; i < chord.length; i++) {
+          this.voice(this.midi(chord[i]), t, stepDur * 15, 'triangle', tr.padGain * G, -6, this.musG);
+          this.voice(this.midi(chord[i]), t, stepDur * 15, 'triangle', tr.padGain * G * 0.7, 8, this.musG);
+        }
       }
-      // hat
-      if (this.track !== 'night') this.hatAt(t, tr.gain * 0.3);
+      // bass
+      if (this.track === 'chase') {
+        if (st % 2 === 0) this.voice(this.midi(chord[0] - 24), t, stepDur * 1.4, 'sawtooth', 0.075 * G);
+      } else if (st % 4 === 0) {
+        var bn = (st === 8) ? chord[2] - 24 : chord[0] - 24;
+        this.voice(this.midi(bn), t, stepDur * 3.2, 'square', 0.07 * G);
+      }
+      // lead
+      if (tr.lead === 'arp' && st % 2 === 0) {
+        var an = chord[(st / 2) % chord.length] + 12;
+        this.voice(this.midi(an), t, stepDur * 1.6, 'triangle', 0.045 * G);
+      } else if (tr.lead === 'bell' && (st === 0 || st === 6 || st === 11)) {
+        this.voice(this.midi(chord[(st % chord.length)] + 12), t, stepDur * 6, 'sine', 0.05 * G);
+      } else if (tr.lead === 'stab' && (st === 0 || st === 6 || st === 10)) {
+        for (var k = 0; k < chord.length; k++) {
+          this.voice(this.midi(chord[k] + 12), t, stepDur * 1.1, 'sawtooth', 0.035 * G);
+        }
+      }
+      // drums
+      if (tr.drums === 'hard') {
+        if (st % 4 === 0) this.drum('kick', t, 0.32 * G);
+        if (st === 4 || st === 12) this.drum('snare', t, 0.16 * G);
+        this.drum('hat', t, (st % 2 ? 0.05 : 0.09) * G);
+      } else if (tr.drums === 'soft') {
+        if (st === 0 || st === 10) this.drum('kick', t, 0.2 * G);
+        if (st === 8) this.drum('snare', t, 0.09 * G);
+        if (st % 2 === 0) this.drum('hat', t, 0.045 * G);
+      }
       this.step++;
-      this.nextNote += spb;
+      this.nextNote += stepDur;
     }
-  },
-  noteAt: function (freq, t, dur, type, gain, dest) {
-    var o = this.ctx.createOscillator(), g = this.ctx.createGain();
-    o.type = type; o.frequency.setValueAtTime(freq, t);
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(gain, t + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g); g.connect(dest);
-    o.start(t); o.stop(t + dur + 0.03);
-  },
-  hatAt: function (t, gain) {
-    var s = this.noiseSource(false), f = this.ctx.createBiquadFilter(), g = this.ctx.createGain();
-    f.type = 'highpass'; f.frequency.value = 7000;
-    g.gain.setValueAtTime(gain, t);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
-    s.connect(f); f.connect(g); g.connect(this.musG);
-    s.start(t); s.stop(t + 0.09);
   }
 };
 var SFX = {
   step: function (wet) {
-    if (wet) AUDIO.noiseBurst(0.12, 900, 1.2, 0.16);
-    else AUDIO.noiseBurst(0.06, 320 + rngFx.r() * 180, 2.2, 0.12);
+    if (wet) { AUDIO.noiseBurst(0.14, 950, 1.1, 0.15); return; }
+    var i = cellAt(player.pos.x, player.pos.z);
+    var soft = i >= 0 && (W.park[i] === 1 || W.park[i] === 5 || W.zone[i] === Z_NATURE);
+    var wood = i >= 0 && W.park[i] === 7;
+    if (INTERIOR.active) AUDIO.noiseBurst(0.05, 520 + rngFx.r() * 200, 3.0, 0.09);
+    else if (wood) AUDIO.noiseBurst(0.07, 240 + rngFx.r() * 120, 2.4, 0.12);
+    else if (soft) AUDIO.noiseBurst(0.09, 700 + rngFx.r() * 300, 1.0, 0.07);
+    else AUDIO.noiseBurst(0.05, 330 + rngFx.r() * 180, 2.6, 0.11);
   },
-  jump: function () { AUDIO.blip(320, 0.14, 'square', 0.12, null, 520); },
-  land: function () { AUDIO.noiseBurst(0.1, 260, 1.6, 0.16); },
+  jump: function () { AUDIO.blip(300, 0.13, 'square', 0.1, null, 520); },
+  land: function () { AUDIO.noiseBurst(0.11, 240, 1.5, 0.16); AUDIO.blip(90, 0.1, 'sine', 0.1, null, 55); },
   horn: function (pos, loud) {
     var d = pos ? dist(pos.x, pos.z, player.pos.x, player.pos.z) : 0;
-    var v = clamp(1 - d / 70, 0, 1) * (loud ? 0.3 : 0.16);
+    var v = clamp(1 - d / 75, 0, 1) * (loud ? 0.26 : 0.13);
     if (v <= 0.01) return;
-    AUDIO.blip(392, 0.28, 'square', v, null);
-    AUDIO.blip(330, 0.28, 'square', v * 0.7, null);
+    AUDIO.blip(392, 0.3, 'square', v, null);
+    AUDIO.blip(311, 0.3, 'square', v * 0.75, null);
+    AUDIO.blip(784, 0.3, 'square', v * 0.2, null);
   },
-  brake: function (pos) { AUDIO.noiseBurst(0.3, 2400, 6, 0.1); },
-  crash: function (v) { AUDIO.noiseBurst(0.45, 180, 0.8, 0.35 * v); AUDIO.blip(90, 0.3, 'square', 0.2 * v, null, 40); },
-  thud: function () { AUDIO.noiseBurst(0.18, 150, 1.0, 0.22); },
-  waterSplash: function (v) { AUDIO.noiseBurst(0.35, 1500, 0.8, 0.18 * (v || 1)); },
-  doorClose: function () { AUDIO.noiseBurst(0.12, 220, 1.4, 0.2); },
-  pickup: function () { AUDIO.blip(660, 0.1, 'square', 0.16); setTimeout(function () { AUDIO.blip(880, 0.14, 'square', 0.16); }, 90); },
+  brake: function () { AUDIO.noiseBurst(0.32, 2600, 7, 0.085); AUDIO.noiseBurst(0.2, 5200, 9, 0.04); },
+  crash: function (v) {
+    AUDIO.noiseBurst(0.4, 200, 0.7, 0.3 * v);
+    AUDIO.noiseBurst(0.22, 2600, 1.2, 0.16 * v);
+    AUDIO.blip(85, 0.28, 'square', 0.18 * v, null, 40);
+  },
+  thud: function () { AUDIO.noiseBurst(0.17, 160, 1.1, 0.2); },
+  waterSplash: function (v) {
+    AUDIO.noiseBurst(0.3, 1500, 0.8, 0.16 * (v || 1));
+    AUDIO.noiseBurst(0.5, 400, 0.6, 0.09 * (v || 1));
+  },
+  doorClose: function () { AUDIO.noiseBurst(0.1, 200, 1.6, 0.16); AUDIO.blip(140, 0.09, 'square', 0.07, null, 90); },
+  pickup: function () {
+    AUDIO.blip(660, 0.09, 'triangle', 0.13);
+    setTimeout(function () { AUDIO.blip(990, 0.12, 'triangle', 0.12); }, 80);
+  },
   success: function () {
-    AUDIO.blip(523, 0.12, 'triangle', 0.2);
-    setTimeout(function () { AUDIO.blip(659, 0.12, 'triangle', 0.2); }, 110);
-    setTimeout(function () { AUDIO.blip(784, 0.24, 'triangle', 0.22); }, 220);
+    AUDIO.blip(523, 0.12, 'triangle', 0.16);
+    setTimeout(function () { AUDIO.blip(659, 0.12, 'triangle', 0.16); }, 110);
+    setTimeout(function () { AUDIO.blip(784, 0.14, 'triangle', 0.17); }, 220);
+    setTimeout(function () { AUDIO.blip(1046, 0.3, 'triangle', 0.18); }, 330);
   },
-  fail: function () { AUDIO.blip(220, 0.3, 'sawtooth', 0.18, null, 110); },
-  talk: function () { AUDIO.blip(440 + rngFx.r() * 120, 0.05, 'square', 0.07); }
+  fail: function () {
+    AUDIO.blip(300, 0.22, 'sawtooth', 0.13, null, 190);
+    setTimeout(function () { AUDIO.blip(190, 0.35, 'sawtooth', 0.12, null, 120); }, 170);
+  },
+  talk: function () { AUDIO.blip(420 + rngFx.r() * 140, 0.045, 'square', 0.05); }
 };
 
 /* =========================================================================
@@ -3868,16 +4420,16 @@ var ADAM = 'آدم', KARIM = 'كريم', SAMIRA = 'سميرة', OLD = 'الرج�
 /* =========================================================================
    [19] MISSION SYSTEM — 12 story missions + side activities
    ========================================================================= */
-function P(cx, cz) { return { cx: cx, cz: cz }; }
+function P(cx, cz) { return { cx: cx * SC, cz: cz * SC }; }
 var MISSIONS = [
   {
     title: 'الوصول',
     intro: [[ADAM, 'وصلت أخيرًا إلى المدينة. آخر رسالة من كريم جاءت من هنا، من الميناء.'],
             [ADAM, 'عليّ أن أصل إلى العنوان الذي تركه لي قبل أن يحل الظلام.']],
     steps: [
-      { type: 'reach', obj: 'تعلّم الحركة: اتبع العلامة عند مخرج الميناء', at: P(142, 218), r: 8,
+      { type: 'reach', obj: 'تعلّم الحركة: اتبع العلامة عند مخرج الميناء', at: P(142, 218), r: 12,
         hint: 'استخدم WASD أو العصا الافتراضية للحركة، والفأرة أو السحب لتدوير الكاميرا.' },
-      { type: 'reach', obj: 'اذهب إلى مبنى الإقامة في الحي المالي', at: P(128, 208), r: 8,
+      { type: 'reach', obj: 'اذهب إلى مبنى الإقامة في الحي المالي', at: P(128, 208), r: 12,
         done: [[ADAM, 'هذا هو المبنى. الغرفة صغيرة لكنها تكفي.'],
                [ADAM, 'غدًا أبدأ البحث. لا بد أن أحدًا هنا رأى كريم.']] }
     ]
@@ -3886,9 +4438,9 @@ var MISSIONS = [
     title: 'أول يوم',
     intro: [[ADAM, 'ترك كريم أشياءه متفرقة في الحي. لنجمعها أولًا.']],
     steps: [
-      { type: 'collect', obj: 'اجمع ملاحظة كريم الأولى', at: P(120, 204), r: 6 },
-      { type: 'collect', obj: 'اجمع مفتاح الغرفة', at: P(134, 200), r: 6 },
-      { type: 'collect', obj: 'اجمع بطاقة الحافلة', at: P(126, 214), r: 6,
+      { type: 'collect', obj: 'اجمع ملاحظة كريم الأولى', at: P(120, 204), r: 10 },
+      { type: 'collect', obj: 'اجمع مفتاح الغرفة', at: P(134, 200), r: 10 },
+      { type: 'collect', obj: 'اجمع بطاقة الحافلة', at: P(126, 214), r: 10,
         done: [[ADAM, 'ملاحظة، مفتاح، وبطاقة. البطاقة مختومة باسم محطة في وسط المدينة.']] }
     ]
   },
@@ -3898,7 +4450,7 @@ var MISSIONS = [
             [ADAM, 'اقترب من أي سيارة واضغط F أو زر «ركوب».']],
     steps: [
       { type: 'enter_vehicle', obj: 'اركب أي مركبة (F أو زر ركوب)' },
-      { type: 'drive', obj: 'قُد إلى وسط المدينة', at: P(108, 176), r: 14,
+      { type: 'drive', obj: 'قُد إلى وسط المدينة', at: P(108, 176), r: 20,
         done: [[ADAM, 'وسط المدينة… الأبراج هنا تحجب الشمس.']] }
     ]
   },
@@ -3906,7 +4458,7 @@ var MISSIONS = [
     title: 'الرسالة',
     intro: [[ADAM, 'البطاقة تشير إلى المحطة المركزية. لعل أحدهم يتذكر وجهه.']],
     steps: [
-      { type: 'talk', obj: 'تحدث إلى الرجل العجوز أمام المحطة المركزية', at: P(88, 165), r: 7,
+      { type: 'talk', obj: 'تحدث إلى الرجل العجوز أمام المحطة المركزية', at: P(88, 165), r: 12,
         talk: [[OLD, 'كريم؟ نعم… شاب هادئ، كان يسأل عن مستودع قديم قرب المرفأ.'],
                [OLD, 'قال إنه سيعود، لكنه لم يعد. آخر مرة رأيته كان متجهًا إلى ساحة النيون.'],
                [ADAM, 'ساحة النيون إذًا.']] }
@@ -3916,7 +4468,7 @@ var MISSIONS = [
     title: 'أضواء المدينة',
     intro: [[ADAM, 'ساحة النيون لا تنام. إن كان أحد يعرف شيئًا فهو هنا.']],
     steps: [
-      { type: 'talk', obj: 'ابحث عن سميرة في ساحة النيون', at: P(106, 154), r: 8,
+      { type: 'talk', obj: 'ابحث عن سميرة في ساحة النيون', at: P(106, 154), r: 13,
         talk: [[SAMIRA, 'أنت أخوه، صحيح؟ تشبهه في الطريقة التي تنظر بها إلى اللافتات.'],
                [SAMIRA, 'كريم كان يتتبع شبكة تنقل صناديق بين المرفأ والمستودعات ليلًا.'],
                [SAMIRA, 'قابلني في الحديقة المركزية بعد حلول الظلام. ليس هنا.']] }
@@ -3926,7 +4478,7 @@ var MISSIONS = [
     title: 'الحديقة',
     intro: [[ADAM, 'الحديقة ليلًا. لقاء لا يريد أحد أن يراه.']],
     steps: [
-      { type: 'reach', obj: 'قابل سميرة في الحديقة المركزية ليلًا', at: P(100, 118), r: 9,
+      { type: 'reach', obj: 'قابل سميرة في الحديقة المركزية ليلًا', at: P(100, 118), r: 14,
         night: true,
         done: [[SAMIRA, 'خذ هذا المفتاح. إنه لمستودع رقم 9 عند المرفأ.'],
                [SAMIRA, 'وانتبه — هم يعرفون أنك تسأل. اهرب الآن!'],
@@ -3937,7 +4489,7 @@ var MISSIONS = [
     title: 'الهروب',
     intro: [[VOICE, 'قف مكانك!'], [ADAM, 'لا وقت للشرح. عليّ أن أختفي.']],
     steps: [
-      { type: 'escape', obj: 'اهرب من المطاردة وابتعد عن الحديقة', at: P(130, 176), r: 16,
+      { type: 'escape', obj: 'اهرب من المطاردة وابتعد عن الحديقة', at: P(130, 176), r: 22,
         done: [[ADAM, 'أفلتّ منهم… لكنهم لن يتوقفوا.']] }
     ]
   },
@@ -3945,7 +4497,7 @@ var MISSIONS = [
     title: 'تحت الماء',
     intro: [[ADAM, 'رسالة سميرة تقول إن كريم أخفى شيئًا تحت رصيف النهر الشرقي.']],
     steps: [
-      { type: 'dive', obj: 'اغطس قرب النهر الشرقي وابحث عن الدليل', at: P(162, 186), r: 12,
+      { type: 'dive', obj: 'اغطس قرب النهر الشرقي وابحث عن الدليل', at: P(162, 186), r: 18,
         hint: 'راقب شريط الأكسجين. اصعد للتنفس قبل أن ينفد.',
         done: [[ADAM, 'علبة معدنية… بداخلها صورة لمبنى ببرج مدبب.'],
                [ADAM, 'أعرف هذا البرج. إنه أعلى مبنى في وسط المدينة.']] }
@@ -3955,9 +4507,9 @@ var MISSIONS = [
     title: 'القمة',
     intro: [[ADAM, 'برج الآرت ديكو. الصورة التقطت من سطحه.']],
     steps: [
-      { type: 'reach', obj: 'اذهب إلى مدخل برج الآرت ديكو واستخدم المصعد', at: P(108, 174), r: 8,
+      { type: 'reach', obj: 'اذهب إلى مدخل برج الآرت ديكو واستخدم المصعد', at: P(108, 174), r: 13,
         hint: 'اضغط E أو زر «تفاعل» عند لوحة المصعد.' },
-      { type: 'reach', obj: 'اصعد إلى سطح البرج', at: P(110, 170), r: 14, minY: 150,
+      { type: 'reach', obj: 'اصعد إلى سطح البرج', at: P(110, 170), r: 20, minY: 150,
         done: [[ADAM, 'من هنا تبدو المدينة كخريطة… وهناك، عند المرفأ، مستودع بابه أزرق.']] }
     ]
   },
@@ -3965,9 +4517,9 @@ var MISSIONS = [
     title: 'الجزيرة',
     intro: [[ADAM, 'قبل المستودع، هناك مكان واحد لم أبحث فيه: الجزيرة.']],
     steps: [
-      { type: 'reach', obj: 'اذهب إلى مرسى العبّارة عند المرفأ', at: P(147, 214), r: 9,
+      { type: 'reach', obj: 'اذهب إلى مرسى العبّارة عند المرفأ', at: P(147, 214), r: 14,
         hint: 'اضغط E عند المرسى لتأخذ العبّارة، أو اسبح إن كنت شجاعًا.' },
-      { type: 'reach', obj: 'اصعد إلى قاعدة التمثال في الجزيرة', at: P(46, 238), r: 14,
+      { type: 'reach', obj: 'اصعد إلى قاعدة التمثال في الجزيرة', at: P(46, 238), r: 20,
         done: [[ADAM, 'تحت قاعدة التمثال… علامة محفورة بخط كريم: «٩».'],
                [ADAM, 'مستودع تسعة. الآن أنا متأكد.']] }
     ]
@@ -3976,8 +4528,8 @@ var MISSIONS = [
     title: 'المرفأ',
     intro: [[ADAM, 'مستودع رقم 9. المفتاح الذي أعطتني سميرة يجب أن يفتحه.']],
     steps: [
-      { type: 'reach', obj: 'اذهب إلى مستودعات بروكلين قرب المرفأ', at: P(188, 214), r: 12 },
-      { type: 'collect', obj: 'افتح الباب وخذ ما بداخله', at: P(192, 216), r: 8,
+      { type: 'reach', obj: 'اذهب إلى مستودعات بروكلين قرب المرفأ', at: P(188, 214), r: 18 },
+      { type: 'collect', obj: 'افتح الباب وخذ ما بداخله', at: P(192, 216), r: 13,
         done: [[ADAM, 'دفتر كريم… وخريطة صغيرة عليها دائرة حول رصيف الشروق.'],
                [ADAM, 'يقول إنه سينتظر هناك عند أول ضوء.']] }
     ]
@@ -3986,7 +4538,7 @@ var MISSIONS = [
     title: 'الشروق',
     intro: [[ADAM, 'رصيف الشروق، عند الفجر. آخر سطر في الدفتر.']],
     steps: [
-      { type: 'reach', obj: 'اذهب إلى الرصيف الغربي عند الفجر', at: P(64, 228), r: 10,
+      { type: 'reach', obj: 'اذهب إلى الرصيف الغربي عند الفجر', at: P(64, 228), r: 15,
         dawn: true,
         done: [[KARIM, 'آدم؟ كيف وصلت إلى هنا؟'],
                [ADAM, 'تتبعت كل ورقة تركتها. المدينة كلها.'],
@@ -4089,6 +4641,7 @@ var MISSION = {
   update: function (dt) {
     if (!this.active || STORY.active) return;
     var s = this.stepDef();
+    if (!INTERIOR.active && !player.vehicle && buildingInFront()) UI.hint('اضغط تفاعل لدخول المبنى');
     if (!s) return;
     var t = this.targetPos();
     this.marker.rotation.y += dt * 1.6;
@@ -4175,7 +4728,7 @@ var SIDE = {
     var mat = new THREE.MeshLambertMaterial({ color: 0x66e0ff, emissive: 0x2299cc, emissiveIntensity: 0.8 });
     // 22 hidden clues placed deterministically on walkable ground
     var placed = 0, tries = 0;
-    while (placed < 22 && tries < 4000) {
+    while (placed < 45 && tries < 9000) {
       tries++;
       var cx = 8 + Math.floor(ihash(tries, 7, 5150) * (N - 16));
       var cz = 8 + Math.floor(ihash(tries, 9, 5151) * (N - 16));
@@ -4394,6 +4947,14 @@ var UI = {
       GS.sens = GS.sens >= 1.9 ? 0.5 : GS.sens + 0.35;
       self.syncSettings();
     });
+    tap('tgPad', function () {
+      GS.padSize = GS.padSize === 'm' ? 'l' : (GS.padSize === 'l' ? 's' : 'm');
+      MC.applyStyle(); self.syncSettings();
+    });
+    tap('tgHand', function () {
+      GS.lefty = !GS.lefty;
+      MC.applyStyle(); self.syncSettings();
+    });
     // the whole screen advances dialogue: on a phone there is no E key
     this.el.dlgWrap.addEventListener('pointerdown', function (e) {
       e.preventDefault();
@@ -4408,6 +4969,8 @@ var UI = {
     $('tgMusic').textContent = 'الموسيقى: ' + (GS.music ? 'تعمل' : 'متوقفة');
     $('tgTouch').textContent = 'تحكم اللمس: ' + (GS.touchMode === 'auto' ? 'تلقائي' : (GS.touchMode === 'on' ? 'دائمًا' : 'متوقف'));
     $('tgInv').textContent = 'حساسية الكاميرا: ' + GS.sens.toFixed(2);
+    $('tgPad').textContent = 'حجم الأزرار: ' + (GS.padSize === 's' ? 'صغير' : GS.padSize === 'l' ? 'كبير' : 'متوسط');
+    $('tgHand').textContent = 'اليد: ' + (GS.lefty ? 'يسار' : 'يمين');
     this.el.btnCont.style.opacity = SAVE.has() ? '1' : '0.45';
   },
   show: function (id) { this.el[id].classList.remove('hidden'); },
@@ -4479,9 +5042,12 @@ var UI = {
       if (this.dmgT <= 0) this.el.hud.style.boxShadow = 'none';
     }
     var rb = $('btnRun');
-    if (rb) {
+    if (rb && rb.lastElementChild) {
       var label = player.swimming ? 'غطس' : 'ركض';
-      if (rb.textContent !== label) rb.textContent = label;
+      if (rb.lastElementChild.textContent !== label) {
+        rb.lastElementChild.textContent = label;
+        rb.firstElementChild.textContent = player.swimming ? '↓' : '»';
+      }
     }
     this.mmT -= dt;
     if (this.mmT <= 0) { this.mmT = 0.18; this.drawMinimap(); }
@@ -4561,6 +5127,7 @@ var MC = {
     };
     // --- virtual joystick (pointer events, multi-touch safe) ---
     var zone = this.els.zone;
+    this.applyStyle();
     zone.addEventListener('pointerdown', function (e) {
       if (self.joyId !== null) return;
       self.joyId = e.pointerId;
@@ -4660,7 +5227,16 @@ var MC = {
     el.addEventListener('pointercancel', up, { passive: false });
     el.addEventListener('pointerleave', up, { passive: false });
   },
+  applyStyle: function () {
+    var b = document.body;
+    b.classList.remove('pad-s', 'pad-l');
+    if (GS.padSize === 's') b.classList.add('pad-s');
+    else if (GS.padSize === 'l') b.classList.add('pad-l');
+    b.classList[GS.lefty ? 'add' : 'remove']('lefty');
+    this.centreKnob();
+  },
   apply: function () {
+    this.applyStyle();
     var on = GS.touchMode === 'on' || (GS.touchMode === 'auto' && isTouch);
     this.active = on;
     this.els.mc.classList[on ? 'remove' : 'add']('hidden');
@@ -4702,14 +5278,14 @@ var NPC_LINES = [
   'كل شيء هنا غالٍ… حتى الهواء.'
 ];
 var INTERACTABLES = [
-  { name: 'مصعد برج الآرت ديكو', cx: 108, cz: 174, r: 9, label: 'اضغط E لاستخدام المصعد',
-    act: function () { teleportTo(110, 170, roofY(110, 170)); UI.banner('سطح البرج'); } },
-  { name: 'مصعد برج المرصد', cx: 196, cz: 202, r: 9, label: 'اضغط E لاستخدام المصعد',
-    act: function () { teleportTo(198, 198, roofY(198, 198)); UI.banner('منصة المرصد'); } },
-  { name: 'عبّارة المرفأ', cx: 147, cz: 214, r: 10, label: 'اضغط E لركوب العبّارة إلى الجزيرة',
-    act: function () { teleportTo(48, 234, null); UI.banner('الجزيرة', 'وصلت بالعبّارة'); } },
-  { name: 'عبّارة الجزيرة', cx: 48, cz: 234, r: 12, label: 'اضغط E للعودة إلى المرفأ',
-    act: function () { teleportTo(147, 214, null); UI.banner('المرفأ'); } }
+  { name: 'مصعد برج الآرت ديكو', cx: 108 * SC, cz: 174 * SC, r: 11, label: 'اضغط E لاستخدام المصعد',
+    act: function () { teleportTo(110 * SC, 170 * SC, roofY(110 * SC, 170 * SC)); UI.banner('سطح البرج'); } },
+  { name: 'مصعد برج المرصد', cx: 196 * SC, cz: 202 * SC, r: 11, label: 'اضغط E لاستخدام المصعد',
+    act: function () { teleportTo(198 * SC, 198 * SC, roofY(198 * SC, 198 * SC)); UI.banner('منصة المرصد'); } },
+  { name: 'عبّارة المرفأ', cx: 147 * SC, cz: 214 * SC, r: 14, label: 'اضغط E لركوب العبّارة إلى الجزيرة',
+    act: function () { teleportTo(48 * SC, 234 * SC, null); UI.banner('الجزيرة', 'وصلت بالعبّارة'); } },
+  { name: 'عبّارة الجزيرة', cx: 48 * SC, cz: 234 * SC, r: 16, label: 'اضغط E للعودة إلى المرفأ',
+    act: function () { teleportTo(147 * SC, 214 * SC, null); UI.banner('المرفأ'); } }
 ];
 function roofY(cx, cz) {
   var i = idx(cx, cz);
@@ -4735,7 +5311,15 @@ function doInteract() {
   AUDIO.init(); AUDIO.resume();
   if (STORY.active) { STORY.next(); return; }
   if (!GS.started || GS.paused) return;
+  if (INTERIOR.active) {
+    var occ = INTERIOR.nearestPerson();
+    if (occ) { STORY.say([[occ.name, occ.lines[(Math.random() * occ.lines.length) | 0]]]); return; }
+    if (INTERIOR.nearDoor()) { INTERIOR.exit(); return; }
+    UI.hint('اقترب من الباب للخروج');
+    return;
+  }
   if (MISSION.interact()) return;
+  // named places (lifts, the ferry) win over walking into a random building
   var it = nearestInteractable();
   if (it) { it.act(); return; }
   var n = NPCS.nearest(player.pos.x, player.pos.z, 6.5);
@@ -4743,6 +5327,10 @@ function doInteract() {
     var line = NPC_LINES[n.line % NPC_LINES.length];
     STORY.say([['أحد المارة', line]]);
     return;
+  }
+  if (!player.vehicle) {
+    var bIn = buildingInFront();
+    if (bIn) { INTERIOR.enter(bIn); return; }
   }
   UI.hint('لا يوجد شيء للتفاعل هنا');
 }
@@ -4772,6 +5360,7 @@ var SAVE = {
         m: MISSION.cur, s: MISSION.step, money: GS.money, score: GS.score,
         hp: GS.hp, time: GS.time, day: GS.day, found: GS.found, free: GS.freeRoam,
         q: GS.quality, snd: GS.sound, mus: GS.music, sens: GS.sens, touch: GS.touchMode,
+        pad: GS.padSize, lefty: GS.lefty,
         play: GS.playSec
       };
       localStorage.setItem(this.KEY, JSON.stringify(d));
@@ -4801,6 +5390,8 @@ var SAVE = {
     if (typeof d.mus === 'boolean') GS.music = d.mus;
     if (typeof d.sens === 'number') GS.sens = d.sens;
     if (typeof d.touch === 'string') GS.touchMode = d.touch;
+    if (typeof d.pad === 'string') GS.padSize = d.pad;
+    if (typeof d.lefty === 'boolean') GS.lefty = d.lefty;
   }
 };
 
@@ -4847,7 +5438,7 @@ var GAME = {
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x74b4ec);
-    scene.fog = new THREE.Fog(0xb9d9f4, QUAL.fog * 0.25, QUAL.fog);
+    scene.fog = new THREE.Fog(0xb9d9f4, QUAL.view * 0.30, QUAL.view);
     chunkGroup = new THREE.Group(); scene.add(chunkGroup);
 
     sun = new THREE.DirectionalLight(0xffffff, 1.0);
@@ -4859,6 +5450,7 @@ var GAME = {
 
     initCamera();
     // landmark shell: always resident so the skyline reads from far away
+    buildSkylineLOD();
     var lg = landmarkMB ? landmarkMB.build() : null;
     if (lg) {
       landmarkMesh = new THREE.Mesh(lg, MATS);
@@ -4878,6 +5470,7 @@ var GAME = {
     TIME.init();
     MISSION.init();
     SIDE.init();
+    INTERIOR.init();
     MC.init();
     this.bindInput();
     UI.syncSettings();
@@ -4940,7 +5533,7 @@ var GAME = {
     GS.money = 120; GS.score = 0; GS.wanted = 0; GS.hp = 100; GS.stamina = 100; GS.oxygen = 100;
     GS.time = 6.4 * 3600; GS.day = 1; GS.found = {}; GS.freeRoam = false; GS.playSec = 0;
     POLICE.clear();
-    spawnPlayerSafe(142, 224);
+    spawnPlayerSafe(142 * SC, 224 * SC);
     SIDE.restoreTaken();
     this.begin();
     MISSION.start(0);
@@ -4955,7 +5548,7 @@ var GAME = {
     POLICE.clear();
     player.pos.set(d.x || 0, d.y || 20, d.z || 0);
     player.yaw = d.yaw || 0;
-    if (!isFinite3(player.pos)) spawnPlayerSafe(142, 224);
+    if (!isFinite3(player.pos)) spawnPlayerSafe(142 * SC, 224 * SC);
     player.pos.y = groundUnder(player.pos.x, player.pos.z, player.pos.y + 4) + 0.3;
     player.safe.copy(player.pos);
     SIDE.restoreTaken();
@@ -4973,6 +5566,7 @@ var GAME = {
     this.last = performance.now();
   },
   toMenu: function () {
+    if (INTERIOR.active) INTERIOR.exit();
     SAVE.save();
     GS.started = false; GS.paused = false;
     if (player.vehicle) exitVehicle(true);
@@ -4996,8 +5590,8 @@ var GAME = {
       renderer.shadowMap.enabled = !!QUAL.shadows;
       if (sun) sun.castShadow = !!QUAL.shadows;
     }
-    if (scene && scene.fog) { scene.fog.near = QUAL.fog * 0.25; scene.fog.far = QUAL.fog; }
-    if (camera) { camera.far = QUAL.fog + 320; camera.updateProjectionMatrix(); }
+    if (scene && scene.fog) { scene.fog.near = QUAL.view * 0.30; scene.fog.far = QUAL.view; }
+    if (camera) { camera.far = QUAL.view + 600; camera.updateProjectionMatrix(); }
     resizeVehiclePool();
     NPCS.resize();
     clearAllChunks();
@@ -5035,22 +5629,32 @@ function loop() {
       // 1 input is event driven; 2 player / vehicle (collision inside)
       if (!STORY.active) updatePlayer(dt);
       else if (player.vehicle) { AUDIO.engineSpeed(0, false); }
-      // 3 chunks
-      updateChunks(player.pos.x, player.pos.z, false);
-      processChunkQueue(6);
-      // 4 traffic  5 npc  6 police
-      updateTraffic(dt);
-      NPCS.update(dt);
-      POLICE.update(dt);
-      // 7 water  8 weather / time
-      WATERSYS.update(dt);
-      TIME.update(dt);
-      WEATHER.update(dt);
-      // 9 missions and side activities
-      MISSION.update(dt);
-      SIDE.update(dt);
+      if (!INTERIOR.active) {
+        // 3 chunks
+        updateChunks(player.pos.x, player.pos.z, false);
+        processChunkQueue(6);
+        // 4 traffic  5 npc  6 police
+        updateTraffic(dt);
+        NPCS.update(dt);
+        POLICE.update(dt);
+        // 7 water  8 weather / time
+        WATERSYS.update(dt);
+        TIME.update(dt);
+        WEATHER.update(dt);
+        // 9 missions and side activities
+        MISSION.update(dt);
+        SIDE.update(dt);
+      } else {
+        TIME.update(dt);
+        hemi.intensity = 0.95; sun.intensity = 0.2;
+        if (!player.vehicle && !STORY.active) {
+          if (INTERIOR.nearDoor()) UI.hint('اضغط تفاعل للخروج');
+          else if (INTERIOR.nearestPerson()) UI.hint('اضغط تفاعل للحديث');
+        }
+      }
       // ambience follows the city around you
       AUDIO.ambienceLevel(clamp(1 - (zoneAt(player.pos.x, player.pos.z) === Z_NATURE ? 1 : 0.15), 0, 1) * (TIME.isNight() ? 0.6 : 1));
+      AUDIO.ambienceEvents(dt);
       AUDIO.updateMusic();
       if (!POLICE.sirenOn && AUDIO.track === 'chase' && GS.wanted === 0) AUDIO.setTrack(null);
       if (AUDIO.track !== 'chase') AUDIO.setTrack(TIME.isNight() ? 'night' : 'explore');
@@ -5099,6 +5703,7 @@ window.addEventListener('error', function (ev) {
 window.NYC = { GS: GS, CFG: CFG, W: W, player: player, GAME: GAME, MISSION: MISSION,
                MC: MC, UI: UI, TIME: TIME, POLICE: POLICE, vehicles: vehicles, NPCS: NPCS,
                chunks: chunks, LANDMARKS: LANDMARKS, SIDE: SIDE, keys: keys, WEATHER: WEATHER,
+               BUILDINGS: BUILDINGS, INTERIOR: INTERIOR, CAM: CAM, buildingInFront: buildingInFront,
                setKey: function (k, v) { keys[k] = v; },
                stats: function () { return renderer ? { calls: renderer.info.render.calls, tris: renderer.info.render.triangles,
                                                         geoms: renderer.info.memory.geometries, tex: renderer.info.memory.textures } : null; } };
