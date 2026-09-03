@@ -79,14 +79,21 @@ canvas{display:block;touch-action:none;}
   opacity:0;transition:opacity .2s;white-space:nowrap;
 }
 #hint.show{opacity:1;}
+body.dlg #hud{opacity:0;transition:opacity .18s;}
+body.dlg #mc{opacity:0;pointer-events:none;transition:opacity .18s;}
+#hud,#mc{transition:opacity .18s;}
+#dlgWrap{
+  position:absolute;inset:0;z-index:15;pointer-events:auto;cursor:pointer;
+  display:flex;align-items:flex-end;justify-content:center;
+  padding:0 0 calc(96px + var(--safe-b));
+}
 #dialog{
-  position:absolute;bottom:calc(96px + var(--safe-b));left:50%;transform:translateX(-50%);z-index:10;
   width:min(92vw,620px);background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px 16px;
-  pointer-events:auto;cursor:pointer;
+  box-shadow:0 10px 40px rgba(0,0,0,.55);
 }
 #dialog .who{color:var(--acc2);font-weight:700;font-size:14px;margin-bottom:6px;}
 #dialog .txt{font-size:15px;line-height:1.8;}
-#dialog .nx{font-size:11px;opacity:.6;margin-top:8px;text-align:left;}
+#dialog .nx{font-size:11.5px;opacity:.7;margin-top:8px;text-align:left;color:var(--acc);}
 
 /* ---------- overlays ---------- */
 .overlay{
@@ -171,7 +178,8 @@ h3{margin:16px 0 6px;font-size:15px;color:var(--acc);text-align:right;}
 body.touch #bottomLeft{bottom:calc(152px + var(--safe-b));width:min(44vw,176px);padding:6px 10px;}
 body.touch #bottomLeft .bl{font-size:10px;}
 body.touch #bottomLeft .bar{height:7px;margin:2px 0 5px;}
-body.touch #dialog{bottom:calc(150px + var(--safe-b));width:min(64vw,520px);}
+body.touch #dlgWrap{padding-bottom:calc(150px + var(--safe-b));}
+body.touch #dialog{width:min(78vw,520px);}
 body.touch #hint{bottom:calc(150px + var(--safe-b));}
 body.touch.driving #bottomLeft{bottom:calc(96px + var(--safe-b));}
 body.touch.driving #joyBase{opacity:0;}
@@ -188,23 +196,44 @@ body.touch.driving #joyZone{pointer-events:none;}
   #btnCam{right:calc(240px + var(--safe-r));width:46px;height:46px;}
   #btnLeftS{left:calc(128px + var(--safe-l));}
   body.touch #bottomLeft{bottom:calc(128px + var(--safe-b));width:min(40vw,150px);}
-  body.touch #dialog{bottom:calc(126px + var(--safe-b));}
+  body.touch #dlgWrap{padding-bottom:calc(120px + var(--safe-b));}
   body.touch #hint{bottom:calc(126px + var(--safe-b));}
   #topRight,#topLeft{font-size:12.5px;padding:6px 9px;}
 }
-@media (max-width:420px){
+/* Portrait phones: the right hand buttons stack in a column ABOVE the minimap,
+   so they can never reach across the screen into the joystick. */
+@media (orientation:portrait){
+  #minimap{width:92px;height:92px;}
+  .tbtn{width:58px;height:58px;font-size:12.5px;}
+  #btnJump{width:62px;height:62px;font-size:14px;}
+  #btnInter {right:calc(18px + var(--safe-r));bottom:calc(122px + var(--safe-b));}
+  #btnJump  {right:calc(86px + var(--safe-r));bottom:calc(120px + var(--safe-b));}
+  #btnVeh   {right:calc(18px + var(--safe-r));bottom:calc(192px + var(--safe-b));}
+  #btnRun   {right:calc(86px + var(--safe-r));bottom:calc(192px + var(--safe-b));}
+  #btnCam   {right:calc(18px + var(--safe-r));bottom:calc(260px + var(--safe-b));width:52px;height:52px;}
+  #btnGas   {right:calc(18px + var(--safe-r));bottom:calc(120px + var(--safe-b));width:66px;height:66px;}
+  #btnBrake {right:calc(92px + var(--safe-r));bottom:calc(122px + var(--safe-b));width:60px;height:60px;}
+  #btnExit  {right:calc(18px + var(--safe-r));bottom:calc(196px + var(--safe-b));}
+  #btnHorn  {right:calc(92px + var(--safe-r));bottom:calc(196px + var(--safe-b));width:54px;height:54px;}
+  #btnLeftS {left:calc(96px + var(--safe-l));bottom:calc(22px + var(--safe-b));}
+  #btnRightS{left:calc(20px + var(--safe-l));bottom:calc(22px + var(--safe-b));}
+  #topLeft{max-width:33vw;font-size:11.5px;padding:6px 8px;}
+  #topLeft .mt{font-size:11.5px;} #topLeft .mo{font-size:11px;} #topLeft .md{font-size:10px;}
+  #topRight{min-width:0;font-size:11.5px;padding:6px 8px;line-height:1.55;}
+  body.touch #bottomLeft{bottom:calc(146px + var(--safe-b));width:min(42vw,168px);}
+  body.touch.driving #bottomLeft{bottom:calc(146px + var(--safe-b));}
+  body.touch #dlgWrap{padding-bottom:calc(330px + var(--safe-b));}
+  body.touch #hint{bottom:calc(300px + var(--safe-b));}
+}
+@media (orientation:portrait) and (max-width:360px){
+  #minimap{width:80px;height:80px;}
+  .tbtn{width:52px;height:52px;font-size:11.5px;}
+  #btnJump{width:56px;height:56px;}
+  #btnJump,#btnRun,#btnBrake,#btnHorn{right:calc(80px + var(--safe-r));}
+}
+@media (max-width:420px) and (orientation:landscape){
   #minimap{width:84px;height:84px;}
   #btnCam{display:none;}
-  .tbtn{width:50px;height:50px;font-size:11.5px;}
-  #btnJump{width:54px;height:54px;font-size:12.5px;}
-  #btnGas{width:56px;height:56px;} #btnBrake{width:52px;height:52px;}
-  #btnLeftS,#btnRightS{width:52px;height:52px;}
-  #btnJump,#btnInter,#btnGas,#btnExit{right:calc(108px + var(--safe-r));}
-  #btnRun,#btnVeh,#btnBrake,#btnHorn{right:calc(168px + var(--safe-r));}
-  #btnLeftS{left:calc(96px + var(--safe-l));}
-  #topLeft{max-width:38vw;font-size:12px;padding:6px 8px;}
-  #topRight{min-width:0;font-size:12px;padding:6px 8px;}
-  #topLeft .mo{font-size:11.5px;} #topLeft .md{font-size:10.5px;}
 }
 </style>
 </head>
@@ -243,10 +272,14 @@ body.touch.driving #joyZone{pointer-events:none;}
     <div id="banner" class=""></div>
     <div id="toast" class=""></div>
     <div id="hint" class=""></div>
-    <div id="dialog" class="hidden">
+  </div>
+
+  <!-- dialogue lives above the touch controls: a full screen tap catcher -->
+  <div id="dlgWrap" class="hidden">
+    <div id="dialog">
       <div class="who" id="dlgWho"></div>
       <div class="txt" id="dlgTxt"></div>
-      <div class="nx">اضغط للمتابعة (E)</div>
+      <div class="nx">اضغط في أي مكان للمتابعة</div>
     </div>
   </div>
 
@@ -711,6 +744,31 @@ function buildFacade(def, si) {
   return { map: map, emi: emi };
 }
 
+// street level shopfronts: one 4-unit band per 16px row so any slice tiles well
+function buildShopfront() {
+  var map = document.createElement('canvas'); map.width = map.height = FAC_PX;
+  var emi = document.createElement('canvas'); emi.width = emi.height = FAC_PX;
+  var m = map.getContext('2d'), e = emi.getContext('2d');
+  m.imageSmoothingEnabled = false; e.imageSmoothingEnabled = false;
+  px(e, 0, 0, FAC_PX, FAC_PX, '#000');
+  var awn = ['#c0392b', '#2e7d5b', '#2f5f9e', '#b07d2a'];
+  for (var row = 0; row < 4; row++) {
+    var oy = row * FAC_WIN;
+    for (var x = 0; x < FAC_PX; x += 2) for (var y = 0; y < FAC_WIN; y += 2)
+      px(m, x, oy + y, 2, 2, shade(0x8b8f97, 0.9 + ihash(x, y + oy, 950) * 0.22));
+    for (var c = 0; c < 4; c++) {
+      var ox = c * FAC_WIN, k = ihash(c, row, 951);
+      px(m, ox + 2, oy + 5, FAC_WIN - 4, 9, shade(0x486a86, 0.92 + k * 0.3));  // shop window
+      px(m, ox + 2, oy + 5, FAC_WIN - 4, 1, shade(0x9fc4dd, 1));
+      px(m, ox + 2, oy + 13, FAC_WIN - 4, 1, shade(0xd8d2c4, 1));               // sill
+      px(m, ox + 1, oy + 2, FAC_WIN - 2, 3, awn[(c + row) % 4]);               // awning
+      px(m, ox + 6, oy + 14, 4, 2, shade(0x4a4f58, 1));                        // doorway
+      if (k > 0.25) px(e, ox + 3, oy + 6, FAC_WIN - 6, 7, shade(0xffe9b4, 0.8 + k * 0.5));
+    }
+  }
+  return { map: map, emi: emi };
+}
+
 /* =========================================================================
    [04] MATERIALS
    ========================================================================= */
@@ -718,7 +776,7 @@ var MATS = [];
 var M_ATLAS = 0, M_GLOW = 1, FAC0 = 2;
 var M_GRASS = 10, M_ASPH = 11, M_ASPH_NS = 12, M_ASPH_EW = 13, M_SIDE = 14,
     M_DIRT = 15, M_SAND = 16, M_PATH = 17, M_ROCK = 18, M_ROOF = 19,
-    M_CROSS = 20, M_BED = 21, M_PLAZA = 22, M_WOOD = 23, M_CROSS_EW = 24;
+    M_CROSS = 20, M_BED = 21, M_PLAZA = 22, M_WOOD = 23, M_CROSS_EW = 24, M_SHOP = 25;
 var GROUND_MATS = [
   [M_GRASS, 'grass'], [M_ASPH, 'asphalt'], [M_ASPH_NS, 'asphaltNS'], [M_ASPH_EW, 'asphaltEW'],
   [M_SIDE, 'sidewalk'], [M_DIRT, 'dirt'], [M_SAND, 'sand'], [M_PATH, 'path'],
@@ -756,6 +814,10 @@ function buildMaterials() {
   for (var g = 0; g < GROUND_MATS.length; g++) {
     MATS[GROUND_MATS[g][0]] = new THREE.MeshLambertMaterial({ map: texFrom(tileTexture(GROUND_MATS[g][1]), true) });
   }
+  var sf = buildShopfront();
+  MATS[M_SHOP] = new THREE.MeshLambertMaterial({
+    map: texFrom(sf.map, true), emissive: 0xffffff, emissiveMap: texFrom(sf.emi, true), emissiveIntensity: 0
+  });
   for (var m = 0; m < MATS.length; m++) if (!MATS[m]) MATS[m] = new THREE.MeshLambertMaterial({ color: 0x888888 });
 
   matWater = new THREE.MeshLambertMaterial({
@@ -771,6 +833,7 @@ function buildMaterials() {
 // night lighting of emissive windows / neon (0 = day, 1 = night)
 function setNightFactor(f) {
   for (var i = 0; i < FACADES.length; i++) MATS[FAC0 + i].emissiveIntensity = f * 0.95;
+  MATS[M_SHOP].emissiveIntensity = 0.25 + f * 0.75;   // shops glow in the evening too
   MATS[M_GLOW].emissiveIntensity = 0.35 + f * 0.65;
 }
 
@@ -1154,6 +1217,22 @@ function genDetails() {
     else if (rngWorld.chance(0.04)) addProp(x, z, { t: 'hydrant' });
     if (zn === Z_NEON && rngWorld.chance(0.35)) addProp(x, z, { t: 'neonsign', h: 6 + (rngWorld.r() * 26 | 0) });
   }
+  // the city meets the water at an embankment, not a flooded street
+  for (z = 2; z < N - 2; z++) for (x = 2; x < N - 2; x++) {
+    i = idx(x, z);
+    if (!W.shore[i] || W.water[i] || W.deck[i]) continue;
+    var zc = W.zone[i];
+    if (zc === Z_NATURE || zc === Z_PARK) continue;
+    // roads must not run straight into the river
+    if (W.road[i] === R_ROAD || W.road[i] === R_CROSS) { W.road[i] = R_SIDE; W.rax[i] = 0; W.rline[i] = 0; }
+    var mask = 0;
+    if (W.water[idx(x + 1, z)] && !W.deck[idx(x + 1, z)]) mask |= 1;
+    if (W.water[idx(x - 1, z)] && !W.deck[idx(x - 1, z)]) mask |= 2;
+    if (W.water[idx(x, z + 1)] && !W.deck[idx(x, z + 1)]) mask |= 4;
+    if (W.water[idx(x, z - 1)] && !W.deck[idx(x, z - 1)]) mask |= 8;
+    if (mask) addProp(x, z, { t: 'seawall', mask: mask });
+  }
+
   // waterfront: piers in the port districts, beaches on natural shores
   for (z = 2; z < N - 2; z++) for (x = 2; x < N - 2; x++) {
     i = idx(x, z);
@@ -1423,6 +1502,14 @@ function emitBuilding(mb, b) {
     mb.box(mat, x0, t.y0, z0, x1, t.y1, z1, 'facade', 0, 51);   // four walls
     mb.groundRect(M_ROOF, x0, z0, x1, z1, t.y1);                // roof slab
   }
+  // street level shopfront band, slightly proud of the facade
+  if (b.h > 8) {
+    var b0 = b.tiers[0];
+    var px0 = c2w(b0.x) - CELL * 0.5 - 0.2, pz0 = c2w(b0.z) - CELL * 0.5 - 0.2;
+    var px1 = px0 + b0.w * CELL + 0.4, pz1 = pz0 + b0.d * CELL + 0.4;
+    mb.box(M_SHOP, px0, 0, pz0, px1, 4.6, pz1, 'facade', 0, 51);
+    mb.groundRect(M_ATLAS, px0, pz0, px1, pz1, 4.6);
+  }
   t = b.tiers[b.tiers.length - 1];
   var rx0 = c2w(t.x) - CELL * 0.5, rz0 = c2w(t.z) - CELL * 0.5;
   var rx1 = rx0 + t.w * CELL, rz1 = rz0 + t.d * CELL, ry = t.y1;
@@ -1441,6 +1528,14 @@ function emitBuilding(mb, b) {
     mb.box(M_ATLAS, rx0, ry, rz1 - pw, rx1, ry + ph, rz1, 'atlas', ATL.concrete, 55);
     mb.box(M_ATLAS, rx0, ry, rz0 + pw, rx0 + pw, ry + ph, rz1 - pw, 'atlas', ATL.concrete, 55);
     mb.box(M_ATLAS, rx1 - pw, ry, rz0 + pw, rx1, ry + ph, rz1 - pw, 'atlas', ATL.concrete, 55);
+  }
+  // pitched roof on the low houses out in the boroughs
+  if (b.top <= 20 && (b.t === 7 || b.t === 4 || b.t === 3) && t.w <= 3 && t.d <= 3) {
+    for (var pr = 0; pr < 3; pr++) {
+      var ins = 0.5 + pr * 0.85;
+      mb.box(M_ATLAS, rx0 + ins, ry + pr * 1.0, rz0 + ins, rx1 - ins, ry + (pr + 1) * 1.0, rz1 - ins,
+             'atlas', ATL.brick, 55);
+    }
   }
   // aircraft-warning mast on skyscrapers
   if (b.top > 130) {
@@ -1529,6 +1624,27 @@ function emitProp(mb, p) {
     case 'neonsign': {
       var hy = p.h;
       mb.box(M_GLOW, x - 1.7, y + hy, z - 0.35, x + 1.7, y + hy + 2.6, z + 0.35, 'atlas', ATL.neon, 55);
+      break;
+    }
+    case 'seawall': {
+      var t0 = W.terr[i], top = t0 + 1.7, bot = CFG.BED_Y;
+      var h2 = CELL * 0.5, wt = 0.7;
+      if (p.mask & 1) {
+        mb.box(M_ATLAS, x + h2 - wt, bot, z - h2, x + h2, top, z + h2, 'atlas', ATL.stone, 55);
+        mb.box(M_ATLAS, x + h2 - wt, top, z - h2, x + h2 - 0.25, top + 0.9, z + h2, 'atlas', ATL.steel, 55);
+      }
+      if (p.mask & 2) {
+        mb.box(M_ATLAS, x - h2, bot, z - h2, x - h2 + wt, top, z + h2, 'atlas', ATL.stone, 55);
+        mb.box(M_ATLAS, x - h2 + 0.25, top, z - h2, x - h2 + wt, top + 0.9, z + h2, 'atlas', ATL.steel, 55);
+      }
+      if (p.mask & 4) {
+        mb.box(M_ATLAS, x - h2, bot, z + h2 - wt, x + h2, top, z + h2, 'atlas', ATL.stone, 55);
+        mb.box(M_ATLAS, x - h2, top, z + h2 - wt, x + h2, top + 0.9, z + h2 - 0.25, 'atlas', ATL.steel, 55);
+      }
+      if (p.mask & 8) {
+        mb.box(M_ATLAS, x - h2, bot, z - h2, x + h2, top, z - h2 + wt, 'atlas', ATL.stone, 55);
+        mb.box(M_ATLAS, x - h2, top, z - h2 + 0.25, x + h2, top + 0.9, z - h2 + wt, 'atlas', ATL.steel, 55);
+      }
       break;
     }
     case 'pierpost':
@@ -1815,22 +1931,33 @@ function partMesh(w, h, d, hex, ox, oy, oz) {
 function makeCharacter(cols) {
   var g = new THREE.Group();
   var torso = partMesh(1.1, 1.3, 0.62, cols.shirt, 0, 1.65, 0);
+  torso.add(partMesh(1.14, 0.18, 0.66, cols.hair, 0, 0.56, 0));          // collar
+  torso.add(partMesh(0.3, 1.28, 0.05, 0xffffff, 0, 0, 0.32));            // zip line
   var head = partMesh(0.86, 0.86, 0.86, cols.skin, 0, 2.72, 0);
-  var hair = partMesh(0.92, 0.26, 0.92, cols.hair, 0, 3.1, 0);
+  head.add(partMesh(0.16, 0.16, 0.06, 0x1a1a1e, -0.19, 0.08, 0.45));     // eyes
+  head.add(partMesh(0.16, 0.16, 0.06, 0x1a1a1e, 0.19, 0.08, 0.45));
+  head.add(partMesh(0.1, 0.1, 0.05, 0xffffff, -0.16, 0.1, 0.46));        // catch light
+  head.add(partMesh(0.1, 0.1, 0.05, 0xffffff, 0.22, 0.1, 0.46));
+  head.add(partMesh(0.3, 0.07, 0.05, 0x6b3a34, 0, -0.24, 0.45));         // mouth
+  head.add(partMesh(0.4, 0.62, 0.06, cols.hair, 0, 0.08, -0.45));        // back hair
+  var neck = partMesh(0.44, 0.24, 0.44, cols.skin, 0, 2.32, 0);
+  var hair = partMesh(0.92, 0.3, 0.92, cols.hair, 0, 3.12, 0);
+  hair.add(partMesh(0.92, 0.2, 0.16, cols.hair, 0, -0.24, 0.4));         // fringe
   var armL = new THREE.Group(), armR = new THREE.Group();
   armL.position.set(-0.76, 2.22, 0); armR.position.set(0.76, 2.22, 0);
   armL.add(partMesh(0.36, 1.2, 0.42, cols.shirt, 0, -0.6, 0));
   armR.add(partMesh(0.36, 1.2, 0.42, cols.shirt, 0, -0.6, 0));
-  armL.add(partMesh(0.36, 0.3, 0.42, cols.skin, 0, -1.3, 0));
-  armR.add(partMesh(0.36, 0.3, 0.42, cols.skin, 0, -1.3, 0));
+  armL.add(partMesh(0.4, 0.34, 0.46, cols.skin, 0, -1.34, 0));           // hands
+  armR.add(partMesh(0.4, 0.34, 0.46, cols.skin, 0, -1.34, 0));
   var legL = new THREE.Group(), legR = new THREE.Group();
   legL.position.set(-0.3, 1.0, 0); legR.position.set(0.3, 1.0, 0);
   legL.add(partMesh(0.44, 1.05, 0.46, cols.pants, 0, -0.52, 0));
   legR.add(partMesh(0.44, 1.05, 0.46, cols.pants, 0, -0.52, 0));
   legL.add(partMesh(0.46, 0.22, 0.6, cols.shoe, 0, -1.12, 0.06));
   legR.add(partMesh(0.46, 0.22, 0.6, cols.shoe, 0, -1.12, 0.06));
-  g.add(torso); g.add(head); g.add(hair); g.add(armL); g.add(armR); g.add(legL); g.add(legR);
-  return { group: g, parts: { torso: torso, head: head, hair: hair, armL: armL, armR: armR, legL: legL, legR: legR } };
+  g.add(torso); g.add(neck); g.add(head); g.add(hair); g.add(armL); g.add(armR); g.add(legL); g.add(legR);
+  return { group: g, parts: { torso: torso, head: head, hair: hair, neck: neck,
+                              armL: armL, armR: armR, legL: legL, legR: legR } };
 }
 
 // ---- world queries -------------------------------------------------------
@@ -2049,6 +2176,7 @@ function animatePlayer(dt) {
     p.torso.rotation.x = 0.02 + sw * 0.2;
   }
   p.head.rotation.x = clamp(player.pitch * 0.4, -0.5, 0.5);
+  p.hair.rotation.x = p.head.rotation.x;
 }
 
 function damagePlayer(v, why) {
@@ -2142,19 +2270,20 @@ function updateCamera(dt) {
       -Math.cos(player.yaw) * Math.cos(player.pitch));
     camera.lookAt(camera.position.x + dir.x, camera.position.y + dir.y, camera.position.z + dir.z);
   } else {
-    player.group.visible = showBody;
     var dist = player.vehicle ? 15.5 : CAM.dist;
     var cp = Math.cos(player.pitch), sp = Math.sin(player.pitch);
     var dx = Math.sin(player.yaw) * cp, dz = Math.cos(player.yaw) * cp;
     var wantX = hx + dx * dist, wantY = hy - sp * dist + CAM.height, wantZ = hz + dz * dist;
     var t = camOccluded(hx, hy + 0.5, hz, wantX, wantY, wantZ);
-    var d2 = dist * clamp(t, 0.22, 1);
+    var d2 = Math.max(4.4, dist * clamp(t, 0.22, 1));   // never end up inside the character
     CAM.curDist += (d2 - CAM.curDist) * Math.min(1, (d2 < CAM.curDist ? 24 : 6) * dt);
     var fx2 = hx + dx * CAM.curDist, fy2 = hy - sp * CAM.curDist + CAM.height * (CAM.curDist / dist), fz2 = hz + dz * CAM.curDist;
     CAM.pos.set(fx2, Math.max(fy2, groundUnder(fx2, fz2, fy2) + 1.2), fz2);
     camera.position.lerp(CAM.pos, Math.min(1, 14 * dt));
     CAM.look.set(hx, hy + 0.6, hz);
     camera.lookAt(CAM.look);
+    // when the wall forces the camera right up behind the head, drop the body
+    player.group.visible = showBody && CAM.curDist > 5.4;
   }
   if (CAM.shake > 0.001) {
     camera.position.x += (rngFx.r() - 0.5) * CAM.shake;
@@ -2464,8 +2593,48 @@ function carAheadBlocked(v) {
   }
   return 0;
 }
+// per frame occupancy of junction cells, so cars actually yield to each other
+var junctionBusy = {};
+function buildJunctionMap() {
+  junctionBusy = {};
+  for (var i = 0; i < vehicles.length; i++) {
+    var v = vehicles[i];
+    if (!v.active) continue;
+    var cx = w2c(v.pos.x), cz = w2c(v.pos.z);
+    if (!inGrid(cx, cz)) continue;
+    var ii = idx(cx, cz);
+    if (W.rax[ii] === 3) junctionBusy[ii] = (junctionBusy[ii] || 0) + 1;
+  }
+  if (player.vehicle) {
+    var pc = w2c(player.pos.x), pz3 = w2c(player.pos.z);
+    if (inGrid(pc, pz3)) { var pi = idx(pc, pz3); if (W.rax[pi] === 3) junctionBusy[pi] = (junctionBusy[pi] || 0) + 1; }
+  }
+}
+// distance to the junction the car is heading into, or -1
+function junctionAhead(v) {
+  var cx = w2c(v.pos.x), cz = w2c(v.pos.z);
+  for (var k = 0; k <= 3; k++) {
+    var jx = cx + v.dir[0] * k, jz = cz + v.dir[1] * k;
+    if (!inGrid(jx, jz)) return -1;
+    var ji = idx(jx, jz);
+    if (W.rax[ji] === 3) {
+      return { d: dist(v.pos.x, v.pos.z, c2w(jx), c2w(jz)) - CELL * 0.5, i: ji };
+    }
+  }
+  return -1;
+}
+function sirenNear(v) {
+  for (var i = 0; i < POLICE.cars.length; i++) {
+    var p = POLICE.cars[i];
+    if (!p.active || !p.chase || p === v) continue;
+    if (dist2(p.pos.x, p.pos.z, v.pos.x, v.pos.z) < 2600) return p;
+  }
+  return null;
+}
+
 function updateTraffic(dt) {
   trafficT += dt;
+  buildJunctionMap();
   var px2 = player.pos.x, pz2 = player.pos.z, far = Math.min(215, QUAL.fog * 0.9);
   var fwx = -Math.sin(player.yaw), fwz = -Math.cos(player.yaw);
   for (var i = 0; i < vehicles.length; i++) {
@@ -2481,43 +2650,85 @@ function updateTraffic(dt) {
     var behind = ((v.pos.x - px2) * fwx + (v.pos.z - pz2) * fwz) < 0;
     if (!v.chase && (d2p > far || (d2p > 155 && behind))) { v.active = false; v.mesh.visible = false; continue; }
     if (v.chase) { updateChaseCar(v, dt); continue; }
-    if (!v.cell || !v.dir) { v.active = false; v.mesh.visible = false; continue; }   // never trust a half-initialised car
+    if (!v.cell || !v.dir) { v.active = false; v.mesh.visible = false; continue; }
 
-    // steer toward the target cell
+    // ---- steering: aim at a point a little beyond the target so turns are smooth ----
     var tx = v.target.x - v.pos.x, tz = v.target.z - v.pos.z;
     var td = Math.sqrt(tx * tx + tz * tz);
-    if (td < 2.2) { pickNextCell(v); tx = v.target.x - v.pos.x; tz = v.target.z - v.pos.z; td = Math.max(0.001, Math.sqrt(tx * tx + tz * tz)); }
-    var want = Math.atan2(tx, tz);
-    v.yaw = angLerp(v.yaw, want, Math.min(1, 6.5 * dt));
-
-    // traffic lights
-    var maxS = v.type.max * 0.62;
-    var ci = idx(clamp(v.cell.x, 0, N - 1), clamp(v.cell.z, 0, N - 1));
-    var hereI = idx(clamp(w2c(v.pos.x), 0, N - 1), clamp(w2c(v.pos.z), 0, N - 1));
-    var L = TLMAP[ci];
-    // a car already inside the junction always clears it — otherwise the grid deadlocks
-    if (L && W.rax[hereI] !== 3) {
-      var green = lightGreenAxis(L);
-      var myAxis = (Math.abs(v.dir[0]) > Math.abs(v.dir[1])) ? 2 : 1;
-      var stopping = (green !== myAxis) || lightIsYellow(L);
-      if (stopping && td < 9) maxS = 0;
+    if (td < 2.4) {
+      pickNextCell(v);
+      tx = v.target.x - v.pos.x; tz = v.target.z - v.pos.z;
+      td = Math.max(0.001, Math.sqrt(tx * tx + tz * tz));
     }
+    var aimX = v.target.x + v.dir[0] * 2.5, aimZ = v.target.z + v.dir[1] * 2.5;
+    var want = Math.atan2(aimX - v.pos.x, aimZ - v.pos.z);
+    var errA = ((want - v.yaw + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
+    v.yaw = angLerp(v.yaw, want, Math.min(1, 7.0 * dt));
+
+    // ---- desired speed: the sum of everything the driver can see ----
+    var limit = v.type.max * 0.62;
+    if (v.type.bus || v.type.tall) limit *= 0.88;
+    var maxS = limit;
+    // slow into corners
+    var turn = Math.abs(errA);
+    if (turn > 0.28) maxS = Math.min(maxS, limit * (turn > 0.9 ? 0.34 : 0.6));
+
+    // traffic light: brake toward the stop line, do not freeze inside the box
+    var hereI = idx(clamp(w2c(v.pos.x), 0, N - 1), clamp(w2c(v.pos.z), 0, N - 1));
+    var inBox = W.rax[hereI] === 3;
+    var ja = junctionAhead(v);
+    if (!inBox && ja !== -1) {
+      var L = TLMAP[ja.i];
+      var stopDist = Math.max(0.4, ja.d);
+      if (L) {
+        var green = lightGreenAxis(L);
+        var myAxis = (Math.abs(v.dir[0]) > Math.abs(v.dir[1])) ? 2 : 1;
+        if (green !== myAxis || lightIsYellow(L)) {
+          maxS = Math.min(maxS, stopDist < 1.2 ? 0 : stopDist * 2.6);
+        }
+      }
+      // give way at uncontrolled junctions only — signals already separate the rest
+      if (!L && (junctionBusy[ja.i] || 0) > 0 && stopDist < 5.5) {
+        maxS = Math.min(maxS, stopDist < 1.5 ? 0 : stopDist * 2.2);
+      }
+    }
+
+    // ---- car in front: keep a gap that grows with speed ----
     var ahead = carAheadBlocked(v);
-    if (ahead) maxS = Math.min(maxS, Math.max(0, (ahead - 5.5) * 3.2));
-    // acceleration + movement
-    v.speed += (maxS - v.speed) * Math.min(1, (maxS < v.speed ? 5.5 : 2.2) * dt);
+    if (ahead) {
+      var gap = 5.0 + v.speed * 0.42;
+      maxS = Math.min(maxS, Math.max(0, (ahead - gap) * 3.4));
+    }
+
+    // ---- make way for a siren ----
+    var sr = sirenNear(v);
+    if (sr) {
+      maxS = Math.min(maxS, limit * 0.28);
+      var rgt = { x: -Math.cos(v.yaw), z: Math.sin(v.yaw) };
+      var sx = v.pos.x + rgt.x * 2.2 * dt * 6, sz = v.pos.z + rgt.z * 2.2 * dt * 6;
+      if (isDrivable(w2c(sx), w2c(sz))) { v.pos.x = sx; v.pos.z = sz; }
+    }
+
+    // ---- longitudinal control ----
+    var brakeHard = maxS < v.speed - 6;
+    var rate = maxS < v.speed ? (brakeHard ? 9.0 : 5.0) : 2.4;
+    v.speed += (maxS - v.speed) * Math.min(1, rate * dt);
     v.speed = clamp(v.speed, 0, v.type.max);
+    if (brakeHard && v.speed > 12 && rngFx.chance(dt * 1.5)) SFX.brake(v.pos);
+
     var nx = v.pos.x + Math.sin(v.yaw) * v.speed * dt;
     var nz = v.pos.z + Math.cos(v.yaw) * v.speed * dt;
     var gy = roadYAt(clamp(w2c(nx), 0, N - 1), clamp(w2c(nz), 0, N - 1));
     if (!blockedAt(nx, nz, gy + 1, 1.6)) { v.pos.x = nx; v.pos.z = nz; v.stuck = 0; }
     else { v.stuck += dt; v.speed *= 0.3; if (v.stuck > 2.6) { v.active = false; v.mesh.visible = false; } }
-    // anti gridlock: a car that has not moved for a long while is recycled elsewhere
-    if (v.speed < 0.6) { v.wait += dt; if (v.wait > 11) { v.wait = 0; v.active = false; v.mesh.visible = false; } }
-    else v.wait = 0;
+
+    // impatience: a horn after a long wait, then a reroute if nothing moves
+    if (v.speed < 0.6) {
+      v.wait += dt;
+      if (v.wait > 3.5 && v.wait < 3.6 && d2p < 90) SFX.horn(v.pos);
+      if (v.wait > 11) { v.wait = 0; v.active = false; v.mesh.visible = false; }
+    } else v.wait = 0;
     v.pos.y += (gy - v.pos.y) * Math.min(1, 8 * dt);
-    // nudge pedestrians and honk
-    if (ahead && ahead < 7 && rngFx.chance(dt * 0.25)) { SFX.horn(v.pos); }
     applyVehicleTransform(v);
   }
 }
@@ -2656,24 +2867,50 @@ function crashVehicle(v, force) {
    ========================================================================= */
 var NPC_LOOKS = [
   { skin: 0xd9a577, shirt: 0xcf4b4b, pants: 0x33384a, hair: 0x211a15 },
-  { skin: 0x8d5a3b, shirt: 0x2f8f6f, pants: 0x2b2f3a, hair: 0x120e0b },
-  { skin: 0xf0c9a0, shirt: 0x3f5fa8, pants: 0x4a4438, hair: 0x6b4a2c },
+  { skin: 0x8d5a3b, shirt: 0x2f8f6f, pants: 0x2b2f3a, hair: 0x120e0b, bag: 0x3b3f4a },
+  { skin: 0xf0c9a0, shirt: 0x3f5fa8, pants: 0x4a4438, hair: 0x6b4a2c, hat: 0x27313f },
   { skin: 0xc98d63, shirt: 0xe0b23c, pants: 0x2f3a48, hair: 0x2a2320 },
-  { skin: 0xe8bb91, shirt: 0x8e4bbf, pants: 0x22262e, hair: 0x4a3020 },
-  { skin: 0x6d4128, shirt: 0xdedede, pants: 0x39424e, hair: 0x0f0d0c }
+  { skin: 0xe8bb91, shirt: 0x8e4bbf, pants: 0x22262e, hair: 0x4a3020, bag: 0x8a3d3d },
+  { skin: 0x6d4128, shirt: 0xdedede, pants: 0x39424e, hair: 0x0f0d0c, hat: 0xb03a3a },
+  { skin: 0xf2d3b0, shirt: 0x2b6f8e, pants: 0x5a4632, hair: 0x8a6a3a },
+  { skin: 0xa06840, shirt: 0x4a4f5a, pants: 0x24303f, hair: 0x171310, bag: 0x2f6f4f },
+  { skin: 0xdcae86, shirt: 0xd96a2b, pants: 0x333a46, hair: 0x3a2a20, hat: 0x2f3a48 },
+  { skin: 0x7b4a2e, shirt: 0x6b4fa8, pants: 0x2a2f38, hair: 0x0d0b0a }
 ];
 var npcGeoCache = {};
 function npcGeometry(look) {
-  var key = look.skin + '_' + look.shirt + '_' + look.pants;
+  var key = look.skin + '_' + look.shirt + '_' + look.pants + '_' + (look.hat || 0) + '_' + (look.bag || 0);
   if (npcGeoCache[key]) return npcGeoCache[key];
-  var b = new VB();
-  b.box(-0.55, 1.0, -0.31, 0.55, 2.3, 0.31, look.shirt);      // torso
-  b.box(-0.43, 2.3, -0.43, 0.43, 3.16, 0.43, look.skin);      // head
-  b.box(-0.46, 3.05, -0.46, 0.46, 3.31, 0.46, look.hair);     // hair
-  b.box(-0.94, 1.05, -0.21, -0.58, 2.25, 0.21, look.shirt);   // arms
-  b.box(0.58, 1.05, -0.21, 0.94, 2.25, 0.21, look.shirt);
-  b.box(-0.52, 0, -0.23, -0.08, 1.05, 0.23, look.pants);      // legs
-  b.box(0.08, 0, -0.23, 0.52, 1.05, 0.23, look.pants);
+  var b = new VB(), dark = 0x1a1a1e;
+  b.box(-0.55, 1.05, -0.31, 0.55, 2.3, 0.31, look.shirt);        // torso
+  b.box(-0.57, 2.12, -0.33, 0.57, 2.32, 0.33, look.hair);        // collar
+  b.box(-0.22, 2.28, -0.2, 0.22, 2.44, 0.2, look.skin);          // neck
+  b.box(-0.43, 2.44, -0.43, 0.43, 3.22, 0.43, look.skin);        // head
+  b.box(-0.45, 3.1, -0.45, 0.45, 3.34, 0.45, look.hair);         // hair
+  b.box(-0.45, 2.9, 0.3, 0.45, 3.14, 0.47, look.hair);           // fringe
+  b.box(-0.2, 3.06, -0.47, 0.2, 3.2, -0.42, look.hair);
+  b.box(-0.26, 2.78, 0.43, -0.1, 2.94, 0.47, dark);              // eyes
+  b.box(0.1, 2.78, 0.43, 0.26, 2.94, 0.47, dark);
+  b.box(-0.23, 2.81, 0.45, -0.15, 2.9, 0.48, 0xf2f2f2);
+  b.box(0.15, 2.81, 0.45, 0.23, 2.9, 0.48, 0xf2f2f2);
+  b.box(-0.14, 2.56, 0.43, 0.14, 2.63, 0.46, 0x6b3a34);          // mouth
+  b.box(-0.94, 1.1, -0.21, -0.58, 2.2, 0.21, look.shirt);        // arms
+  b.box(0.58, 1.1, -0.21, 0.94, 2.2, 0.21, look.shirt);
+  b.box(-0.96, 0.78, -0.23, -0.56, 1.12, 0.23, look.skin);       // hands
+  b.box(0.56, 0.78, -0.23, 0.96, 1.12, 0.23, look.skin);
+  b.box(-0.52, 0.16, -0.23, -0.08, 1.1, 0.23, look.pants);       // legs
+  b.box(0.08, 0.16, -0.23, 0.52, 1.1, 0.23, look.pants);
+  b.box(-0.55, 0, -0.26, -0.05, 0.2, 0.3, dark);                 // shoes
+  b.box(0.05, 0, -0.26, 0.55, 0.2, 0.3, dark);
+  if (look.hat) {
+    b.box(-0.47, 3.3, -0.47, 0.47, 3.5, 0.47, look.hat);
+    b.box(-0.44, 3.24, 0.3, 0.44, 3.34, 0.62, look.hat);         // peak
+  }
+  if (look.bag) {
+    b.box(-0.42, 1.3, -0.62, 0.42, 2.25, -0.3, look.bag);
+    b.box(-0.5, 1.6, -0.34, -0.4, 2.3, 0.3, look.bag);           // straps
+    b.box(0.4, 1.6, -0.34, 0.5, 2.3, 0.3, look.bag);
+  }
   var g = b.build();
   npcGeoCache[key] = g;
   return g;
@@ -2695,7 +2932,8 @@ var NPCS = {
       this.list.push({
         mesh: mesh, pos: new THREE.Vector3(), yaw: 0, active: false, state: 'walk',
         t: 0, anim: rngFx.r() * 6, target: new THREE.Vector3(), down: 0, look: look,
-        line: (rngFx.r() * 1000) | 0, speed: 2.6 + rngFx.r() * 2.2
+        line: (rngFx.r() * 1000) | 0, speed: 2.6 + rngFx.r() * 2.2,
+        waitT: 0, crossT: 0, idleT: 0, dodgeT: 0, dodgeX: 0, dodgeZ: 0, panicT: 0, crossCd: 0
       });
     }
   },
@@ -2725,26 +2963,96 @@ var NPCS = {
     this.newTarget(n);
     return true;
   },
+  // prefer somewhere on this side of the street: strolling reads better than
+  // a crowd permanently queued at the kerb
   newTarget: function (n) {
-    var c = this.findWalkCell(n.pos.x, n.pos.z, 8, 40);
-    if (c) n.target.set(c2w(c.x), 0, c2w(c.z));
+    var best = null;
+    for (var k = 0; k < 5; k++) {
+      var c = this.findWalkCell(n.pos.x, n.pos.z, 8, 40);
+      if (!c) continue;
+      var wx = c2w(c.x), wz = c2w(c.z);
+      if (!best) best = { x: wx, z: wz };
+      var crosses = false;
+      for (var t = 0.2; t < 1; t += 0.2) {
+        if (this.isRoad(lerp(n.pos.x, wx, t), lerp(n.pos.z, wz, t))) { crosses = true; break; }
+      }
+      if (!crosses) { best = { x: wx, z: wz }; break; }
+    }
+    if (best) n.target.set(best.x, 0, best.z);
     else n.target.set(n.pos.x + (rngFx.r() - 0.5) * 20, 0, n.pos.z + (rngFx.r() - 0.5) * 20);
     n.t = 4 + rngFx.r() * 10;
   },
+  isRoad: function (wx, wz) {
+    var i = cellAt(wx, wz);
+    if (i < 0) return false;
+    return (W.road[i] === R_ROAD || W.road[i] === R_CROSS) && !W.deck[i];
+  },
+  // a crossing within reach, preferring one that leads toward the target
+  findCrossing: function (n) {
+    var cx = w2c(n.pos.x), cz = w2c(n.pos.z), best = null, bs = 1e9;
+    for (var dz = -8; dz <= 8; dz++) for (var dx = -8; dx <= 8; dx++) {
+      var x = cx + dx, z = cz + dz;
+      if (!inGrid(x, z)) continue;
+      var i = idx(x, z);
+      if (W.road[i] !== R_CROSS) continue;
+      var wx = c2w(x), wz = c2w(z);
+      var score = dist(wx, wz, n.pos.x, n.pos.z) + dist(wx, wz, n.target.x, n.target.z) * 0.6;
+      if (score < bs) { bs = score; best = { x: wx, z: wz }; }
+    }
+    return best;
+  },
+  // is the road clear enough to step out?
+  canCross: function (n) {
+    var impatient = n.waitT > 5;
+    var reach = impatient ? 150 : 340;          // squared units
+    for (var i = 0; i < vehicles.length; i++) {
+      var v = vehicles[i];
+      if (!v.active || v.speed < 3) continue;
+      var dx = n.pos.x - v.pos.x, dz = n.pos.z - v.pos.z;
+      var d2 = dx * dx + dz * dz;
+      if (d2 > reach) continue;
+      var d = Math.sqrt(d2) || 1;
+      var fx = Math.sin(v.yaw), fz = Math.cos(v.yaw);
+      if ((dx / d) * fx + (dz / d) * fz > 0.6) return false;       // genuinely bearing down
+    }
+    if (player.vehicle && Math.abs(player.vehicle.speed) > 5 &&
+        dist2(player.pos.x, player.pos.z, n.pos.x, n.pos.z) < reach) return false;
+    return true;
+  },
+  // a car about to hit us: step out of its path, not along it
+  carThreat: function (n) {
+    for (var i = 0; i < vehicles.length; i++) {
+      var v = vehicles[i];
+      if (!v.active || Math.abs(v.speed) < 7) continue;
+      var dx = n.pos.x - v.pos.x, dz = n.pos.z - v.pos.z;
+      var d2 = dx * dx + dz * dz;
+      if (d2 > 300) continue;
+      var d = Math.sqrt(d2) || 1;
+      var fx = Math.sin(v.yaw), fz = Math.cos(v.yaw);
+      var fwd = (dx / d) * fx + (dz / d) * fz;
+      if (fwd < 0.55) continue;
+      var lat = (dx / d) * fz - (dz / d) * fx;
+      var sgn = lat >= 0 ? 1 : -1;
+      return { x: fz * sgn, z: -fx * sgn };
+    }
+    return null;
+  },
   update: function (dt) {
     var px2 = player.pos.x, pz2 = player.pos.z, far = Math.min(150, QUAL.fog * 0.7);
+    var fwx = -Math.sin(player.yaw), fwz = -Math.cos(player.yaw);
+    var alarmed = GS.wanted >= 3;
     for (var i = 0; i < this.list.length; i++) {
       var n = this.list[i];
       if (!n.active) { if (rngFx.chance(dt * 2.4)) this.spawn(n, px2, pz2); continue; }
       var dp = dist(n.pos.x, n.pos.z, px2, pz2);
-      if (dp > far || (dp > 120 && ((n.pos.x - px2) * (-Math.sin(player.yaw)) + (n.pos.z - pz2) * (-Math.cos(player.yaw))) < 0)) {
+      if (dp > far || (dp > 120 && ((n.pos.x - px2) * fwx + (n.pos.z - pz2) * fwz) < 0)) {
         n.active = false; n.mesh.visible = false; continue;
       }
       if (n.down > 0) {                                  // knocked over, gets back up
         n.down -= dt;
         n.mesh.rotation.z = clamp(n.down, 0, 1) * 1.5;
         n.mesh.position.set(n.pos.x, n.pos.y, n.pos.z);
-        if (n.down <= 0) { n.mesh.rotation.z = 0; this.newTarget(n); }
+        if (n.down <= 0) { n.mesh.rotation.z = 0; n.state = 'walk'; this.newTarget(n); }
         continue;
       }
       if (n.state === 'talk') {
@@ -2754,23 +3062,98 @@ var NPCS = {
         n.mesh.position.y = n.pos.y + Math.abs(Math.sin(n.anim)) * 0.06;
         continue;
       }
-      n.t -= dt;
-      var tx = n.target.x - n.pos.x, tz = n.target.z - n.pos.z;
-      var td = Math.sqrt(tx * tx + tz * tz);
-      if (td < 2.0 || n.t <= 0) { this.newTarget(n); continue; }
-      var vx = tx / td * n.speed, vz = tz / td * n.speed;
-      // avoid the player and moving cars
-      if (dp < 3.5) { vx += (n.pos.x - px2) / dp * 3; vz += (n.pos.z - pz2) / dp * 3; }
-      var nx = n.pos.x + vx * dt, nz = n.pos.z + vz * dt;
-      var gy = groundUnder(nx, nz, n.pos.y + 1);
-      if (!blockedAt(nx, nz, gy, 0.7) && Math.abs(gy - n.pos.y) < 3) {
-        n.pos.x = nx; n.pos.z = nz; n.pos.y = gy;
-      } else this.newTarget(n);
-      n.yaw = angLerp(n.yaw, Math.atan2(vx, vz), Math.min(1, 8 * dt));
-      n.anim += dt * n.speed * 1.5;
-      n.mesh.position.set(n.pos.x, n.pos.y + Math.abs(Math.sin(n.anim)) * 0.14, n.pos.z);
+
+      // reflexes come first
+      if (n.state !== 'dodge') {
+        var thr = this.carThreat(n);
+        if (thr) { n.state = 'dodge'; n.dodgeX = thr.x; n.dodgeZ = thr.z; n.dodgeT = 0.9; }
+      }
+      if (alarmed && dp < 42 && n.state !== 'dodge' && n.state !== 'panic') { n.state = 'panic'; n.panicT = 2.2 + rngFx.r() * 2; }
+
+      var speed = n.speed, vx = 0, vz = 0, moving = true;
+      if (n.state === 'dodge') {
+        n.dodgeT -= dt; speed = n.speed * 2.3;
+        vx = n.dodgeX * speed; vz = n.dodgeZ * speed;
+        if (n.dodgeT <= 0) { n.state = 'walk'; this.newTarget(n); }
+      } else if (n.state === 'panic') {
+        n.panicT -= dt; speed = n.speed * 2.1;
+        var ax = n.pos.x - px2, az = n.pos.z - pz2, al = Math.sqrt(ax * ax + az * az) || 1;
+        vx = ax / al * speed; vz = az / al * speed;
+        if (n.panicT <= 0) { n.state = 'walk'; this.newTarget(n); }
+      } else if (n.state === 'idle') {
+        n.idleT -= dt;
+        n.yaw += dt * 0.8;
+        moving = false;
+        if (n.idleT <= 0) { n.state = 'walk'; this.newTarget(n); }
+      } else if (n.state === 'wait') {
+        n.waitT += dt;
+        moving = false;
+        n.yaw = angLerp(n.yaw, Math.atan2(n.target.x - n.pos.x, n.target.z - n.pos.z), Math.min(1, 5 * dt));
+        if (this.canCross(n)) { n.state = 'cross'; n.crossT = 7; n.t = 14; }
+        else if (n.waitT > 9) { n.state = 'walk'; this.newTarget(n); }
+      } else {
+        n.t -= dt;
+        if (n.state === 'cross') {
+          n.crossT -= dt;
+          if (n.crossT <= 0 || !this.isRoad(n.pos.x, n.pos.z)) n.state = 'walk';
+        }
+        var tx = n.target.x - n.pos.x, tz = n.target.z - n.pos.z;
+        var td = Math.sqrt(tx * tx + tz * tz);
+        if (td < 2.0 || n.t <= 0) {
+          if (rngFx.chance(0.3)) { n.state = 'idle'; n.idleT = 1.4 + rngFx.r() * 3.6; }
+          else { n.state = 'walk'; this.newTarget(n); }
+          continue;
+        }
+        speed = (n.state === 'cross') ? n.speed * 1.65 : n.speed;
+        vx = tx / td * speed; vz = tz / td * speed;
+        // stepping onto a road? use a crossing, and look before you go
+        if (n.state === 'walk') {
+          var fx2 = n.pos.x + (vx / speed) * 2.8, fz2 = n.pos.z + (vz / speed) * 2.8;
+          if (this.isRoad(fx2, fz2)) {
+            n.crossCd -= dt;
+            if (n.crossCd <= 0) {
+              n.crossCd = 1.5;
+              var cr = this.findCrossing(n);
+              if (cr && dist(cr.x, cr.z, n.pos.x, n.pos.z) > 5.5) {
+                n.target.set(cr.x, 0, cr.z); n.t = 14; continue;
+              }
+            }
+            n.state = 'wait'; n.waitT = 0; continue;
+          }
+        }
+      }
+
+      // keep out of each other's way
+      for (var j = 0; j < this.list.length; j++) {
+        if (j === i) continue;
+        var o = this.list[j];
+        if (!o.active || o.down > 0) continue;
+        var sx = n.pos.x - o.pos.x, sz = n.pos.z - o.pos.z;
+        var sd2 = sx * sx + sz * sz;
+        if (sd2 > 4.2 || sd2 < 0.0001) continue;
+        var sd = Math.sqrt(sd2);
+        vx += (sx / sd) * 2.4; vz += (sz / sd) * 2.4;
+      }
+      // and out of the player's way
+      if (dp < 3.2 && dp > 0.01) { vx += (n.pos.x - px2) / dp * 3; vz += (n.pos.z - pz2) / dp * 3; }
+
+      if (moving) {
+        var nx = n.pos.x + vx * dt, nz = n.pos.z + vz * dt;
+        var gy = groundUnder(nx, nz, n.pos.y + 1);
+        if (!blockedAt(nx, nz, gy, 0.7) && Math.abs(gy - n.pos.y) < 3) {
+          n.pos.x = nx; n.pos.z = nz; n.pos.y = gy;
+        } else if (n.state === 'walk') { this.newTarget(n); }
+        var sp = Math.sqrt(vx * vx + vz * vz);
+        if (sp > 0.2) n.yaw = angLerp(n.yaw, Math.atan2(vx, vz), Math.min(1, 8 * dt));
+        n.anim += dt * Math.max(1.5, sp * 1.5);
+        n.mesh.position.set(n.pos.x, n.pos.y + Math.abs(Math.sin(n.anim)) * 0.14, n.pos.z);
+        n.mesh.rotation.x = Math.sin(n.anim) * 0.05;
+      } else {
+        n.anim += dt * 1.6;
+        n.mesh.position.set(n.pos.x, n.pos.y + Math.abs(Math.sin(n.anim)) * 0.04, n.pos.z);
+        n.mesh.rotation.x = 0;
+      }
       n.mesh.rotation.y = n.yaw;
-      n.mesh.rotation.x = Math.sin(n.anim) * 0.05;
     }
   },
   nearest: function (x, z, maxD) {
@@ -2881,6 +3264,7 @@ var POLICE = {
         if (!v.chase) {
           if (!v.active) { if (!spawnTrafficCar(v, player.pos.x, player.pos.z, false)) continue; }
           v.chase = true;
+          v.flank = [0, 1, -1, 1.8][activeCount % 4];      // spread the units out
         }
         activeCount++;
       } else if (v.chase) { v.chase = false; v.lights[0].visible = v.lights[1].visible = false; }
@@ -2976,19 +3360,54 @@ function updateChaseCar(v, dt) {
     if (bd > 170 || GS.wanted <= 0) v.block = false;
     return;
   }
-  var tx = player.pos.x - v.pos.x, tz = player.pos.z - v.pos.z;
-  var d = Math.sqrt(tx * tx + tz * tz) || 1;
+  // ---- interception: aim where the target WILL be, not where it is ----
+  var tgt = player.vehicle ? player.vehicle : player;
+  var tvx = 0, tvz = 0;
+  if (player.vehicle) {
+    tvx = Math.sin(player.vehicle.yaw) * player.vehicle.speed;
+    tvz = Math.cos(player.vehicle.yaw) * player.vehicle.speed;
+  } else { tvx = player.vel.x; tvz = player.vel.z; }
+  var dx0 = tgt.pos.x - v.pos.x, dz0 = tgt.pos.z - v.pos.z;
+  var d = Math.sqrt(dx0 * dx0 + dz0 * dz0) || 1;
+  var lead = clamp(d / Math.max(8, v.speed + 6), 0, 2.4);
+  var aimX = tgt.pos.x + tvx * lead, aimZ = tgt.pos.z + tvz * lead;
+
+  // ---- flanking: each unit approaches on its own line so they do not stack ----
+  if (v.flank === undefined) v.flank = 0;
+  if (d > 26) {
+    var px3 = -dz0 / d, pz3 = dx0 / d;
+    aimX += px3 * v.flank * 9;
+    aimZ += pz3 * v.flank * 9;
+  }
+  var tx = aimX - v.pos.x, tz = aimZ - v.pos.z;
   var want = Math.atan2(tx, tz);
-  v.yaw = angLerp(v.yaw, want, Math.min(1, 3.2 * dt));
-  var maxS = t.max * (d > 24 ? 1.0 : 0.62);
-  v.speed += (maxS - v.speed) * Math.min(1, 2.4 * dt);
+
+  // ---- obstacle probing: pick the freest of three headings ----
+  var best = want, bestScore = -1e9;
+  for (var k = -1; k <= 1; k++) {
+    var a = want + k * 0.62;
+    var free = 0;
+    for (var s2 = 1; s2 <= 4; s2++) {
+      var px4 = v.pos.x + Math.sin(a) * s2 * 5.5, pz4 = v.pos.z + Math.cos(a) * s2 * 5.5;
+      var gy2 = roadYAt(clamp(w2c(px4), 0, N - 1), clamp(w2c(pz4), 0, N - 1));
+      if (blockedAt(px4, pz4, gy2 + 1, 2.0) || waterAt(px4, pz4)) break;
+      free += isDrivable(w2c(px4), w2c(pz4)) ? 1.4 : 1;
+    }
+    var score = free - Math.abs(k) * 0.55;
+    if (score > bestScore) { bestScore = score; best = a; }
+  }
+  v.yaw = angLerp(v.yaw, best, Math.min(1, 3.6 * dt));
+
+  var maxS = t.max * (d > 30 ? 1.05 : (d > 12 ? 0.8 : 0.5));
+  if (bestScore < 1.2) maxS *= 0.45;                    // tight spot: slow down
+  v.speed += (maxS - v.speed) * Math.min(1, 2.6 * dt);
   var nx = v.pos.x + Math.sin(v.yaw) * v.speed * dt;
   var nz = v.pos.z + Math.cos(v.yaw) * v.speed * dt;
   var gy = roadYAt(clamp(w2c(nx), 0, N - 1), clamp(w2c(nz), 0, N - 1));
   if (!blockedAt(nx, nz, gy + 1, 1.8) && !waterAt(nx, nz)) { v.pos.x = nx; v.pos.z = nz; v.stuck = 0; }
   else {
     v.stuck += dt; v.speed *= 0.4;
-    v.yaw += (rngFx.chance(0.5) ? 1 : -1) * 1.6 * dt;
+    v.yaw += (rngFx.chance(0.5) ? 1 : -1) * 1.8 * dt;
     if (v.stuck > 3.5) {
       v.stuck = 0;
       if (!spawnTrafficCar(v, player.pos.x, player.pos.z, false)) { v.active = false; v.mesh.visible = false; return; }
@@ -3930,7 +4349,7 @@ var UI = {
   init: function () {
     var ids = ['hud', 'uiClock', 'uiMoney', 'uiScore', 'wanted', 'uiMTitle', 'uiMObj', 'uiMDist',
       'hpF', 'stF', 'oxF', 'hpT', 'stT', 'oxT', 'oxWrap', 'minimap', 'toast', 'banner', 'hint',
-      'dialog', 'dlgWho', 'dlgTxt', 'loading', 'loadMsg', 'menu', 'settings', 'help', 'pause',
+      'dialog', 'dlgWrap', 'dlgWho', 'dlgTxt', 'loading', 'loadMsg', 'menu', 'settings', 'help', 'pause',
       'err', 'errMsg', 'pauseMission', 'mc', 'btnCont', 'loadBar'];
     for (var i = 0; i < ids.length; i++) this.el[ids[i]] = $(ids[i]);
     this.mm = this.el.minimap.getContext('2d');
@@ -3975,7 +4394,12 @@ var UI = {
       GS.sens = GS.sens >= 1.9 ? 0.5 : GS.sens + 0.35;
       self.syncSettings();
     });
-    this.el.dialog.addEventListener('click', function () { STORY.next(); });
+    // the whole screen advances dialogue: on a phone there is no E key
+    this.el.dlgWrap.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      AUDIO.init(); AUDIO.resume();
+      STORY.next();
+    }, { passive: false });
   },
   syncSettings: function () {
     var qb = document.querySelectorAll('#segQ button');
@@ -4028,11 +4452,12 @@ var UI = {
     this.bannerT = 2.6;
   },
   dialog: function (who, txt) {
+    document.body.classList.add('dlg');
     this.el.dlgWho.textContent = who;
     this.el.dlgTxt.textContent = txt;
-    this.el.dialog.classList.remove('hidden');
+    this.el.dlgWrap.classList.remove('hidden');
   },
-  dialogHide: function () { this.el.dialog.classList.add('hidden'); },
+  dialogHide: function () { this.el.dlgWrap.classList.add('hidden'); document.body.classList.remove('dlg'); },
   hudT: 0,
   update: function (dt) {
     this.hudT -= dt;
@@ -4560,7 +4985,7 @@ var GAME = {
   setPaused: function (p) {
     if (!GS.started) return;
     GS.paused = p;
-    if (p) { UI.show('pause'); if (document.exitPointerLock) document.exitPointerLock(); }
+    if (p) { if (STORY.active) STORY.close(); UI.show('pause'); if (document.exitPointerLock) document.exitPointerLock(); }
     else { UI.hide('pause'); UI.hide('settings'); UI.hide('help'); this.last = performance.now(); }
   },
   setQuality: function (q) {
